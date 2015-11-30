@@ -70,9 +70,10 @@ problems =[
     #  zdt3(),
     # golinski(), zdt6()
     # srinivas()
-    POM3B(),
+    # POM3B(),
     POM3A(),
-    POM3C(), POM3D(),
+    POM3C(),
+    # POM3D(),
     # dtlz1(9, 5),
     # dtlz2(14, 5),
     # dtlz3(14, 5),
