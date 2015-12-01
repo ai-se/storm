@@ -1,3 +1,4 @@
+from __future__ import division
 def get_data_from_archive(problems, algorithms, Configurations, function):
     from PerformanceMeasures.DataFrame import ProblemFrame
     problem_dict = {}
@@ -27,19 +28,44 @@ def get_data_from_archive(problems, algorithms, Configurations, function):
     return problem_dict
 
 
-def generate_summary(problems, algorithms, list_hypervolume_scores, list_spread_scores,base_line, baseline, Configurations, tag="Comparisions"):
-    for measure_name, list_xx_scores in zip(["HyperVolume", "Spread"], [list_hypervolume_scores, list_spread_scores]):
-        # concatenating the dictionaries
-        x_scores = list_xx_scores[0]
-        for x_score in list_xx_scores: x_scores.update(x_score)
-        x_dpoints = []
-        import pdb
-        pdb.set_trace()
-        for problem in problems:
-            from PerformanceMeasures.DataFrame import ProblemFrame
-            data = ProblemFrame(problem, algorithms)
-            population = data.get_frontier_values(Configurations["Universal"]["No_of_Generations"])
-            for objective_number in xrange(len(problem.objectives)):
-                for algorithm in algorithms:
-                    for repeat in xrange(Configurations["Universal"]["Repeats"]):
-                        candidates = [pop.objectives for pop in population[algorithm.name][repeat]]
+def generate_summary(problems, algorithms, baseline, Configurations, tag="Comparisions"):
+    for problem in problems:
+        print problem.name , " - " * 50
+        from PerformanceMeasures.DataFrame import ProblemFrame
+        data = ProblemFrame(problem, algorithms)
+        population = data.get_frontier_values(Configurations["Universal"]["No_of_Generations"] - 1)
+
+        fast_algorithm_population = []
+        for repeat in xrange(Configurations["Universal"]["Repeats"]):
+            fast_algorithm_population.append([pop.objectives for pop in population[baseline][repeat]])
+
+
+
+        for algorithm in algorithms:
+            if algorithm.name != baseline:
+                baseline_population = []
+                print algorithm.name + " | ",
+                for repeat in xrange(Configurations["Universal"]["Repeats"]):
+                    baseline_population.append([pop.objectives for pop in population[algorithm.name][repeat]])
+                for objective_number in xrange(len(problem.objectives)):
+                    fast_algorithm_objective_list = [flat[objective_number] for fap in fast_algorithm_population for flat in fap]
+                    try:
+                        baseline_objective_list = [flat[objective_number]  for bp in baseline_population for flat in bp]
+                    except:
+                        import pdb
+                        pdb.set_trace()
+                    from numpy import std, mean
+                    s = std(baseline_objective_list)
+                    small_effect = s * 0.4
+                    n1 = mean(baseline_objective_list)
+                    n2 = mean(fast_algorithm_objective_list)
+                    if abs(n1 - n2) <= small_effect: print "Yes", round(abs(n1 - n2)/(s+0.000000001), 3),
+                    else: print "No", round(abs(n1 - n2)/(s+0.000000001), 3),
+                    print "|",
+                print
+
+
+
+
+
+

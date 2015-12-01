@@ -96,8 +96,8 @@ class RepeatFrame():
 
     def get_generation_data(self):
         from os import listdir
-        from os.path import isfile, join
-        files = [join(self.foldername, f) for f in listdir(self.foldername) if isfile(join(self.foldername, f))]
+        from os.path import isfile, join, getmtime
+        files = sorted([join(self.foldername, f) for f in listdir(self.foldername) if isfile(join(self.foldername, f))], key=lambda x: getmtime(x))
         self.generations = [GenerationFrame(self.problem, file) for file in files]
 
     def get_frontier(self, number):
