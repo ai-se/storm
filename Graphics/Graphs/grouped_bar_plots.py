@@ -18,19 +18,22 @@ def barplot(dpoints, file_name, title, color):
     ax = fig.add_subplot(111)
 
 
-    # Aggregate the conditions and the categories according to their
-    # mean values
-    conditions = [(c, np.mean(dpoints[dpoints[:,0] == c][:,2].astype(float)))
-                  for c in np.unique(dpoints[:,0])]
-    categories = [(c, np.mean(dpoints[dpoints[:,1] == c][:,2].astype(float)))
-                  for c in np.unique(dpoints[:,1])]
+    # # Aggregate the conditions and the categories according to their
+    # # mean values
+    # conditions = [(c, np.mean(dpoints[dpoints[:,0] == c][:,2].astype(float)))
+    #               for c in np.unique(dpoints[:,0])]
+    # categories = [(c, np.mean(dpoints[dpoints[:,1] == c][:,2].astype(float)))
+    #               for c in np.unique(dpoints[:,1])]
+    #
+    # # sort the conditions, categories and data so that the bars in
+    # # the plot will be ordered by category and condition
+    # conditions = [c[0] for c in sorted(conditions, key=o.itemgetter(1))]
+    # categories = [c[0] for c in sorted(categories, key=o.itemgetter(1))]
 
-    # sort the conditions, categories and data so that the bars in
-    # the plot will be ordered by category and condition
-    conditions = [c[0] for c in sorted(conditions, key=o.itemgetter(1))]
-    categories = [c[0] for c in sorted(categories, key=o.itemgetter(1))]
+    conditions = list(set([c[0] for c in dpoints]))
+    categories = list(set([c[1] for c in dpoints]))
 
-    dpoints = np.array(sorted(dpoints, key=lambda x: categories.index(x[1])))
+    # dpoints = np.array(sorted(dpoints, key=lambda x: categories.index(x[1])))
 
     # the space between each set of bars
     space = 0.3
@@ -42,8 +45,7 @@ def barplot(dpoints, file_name, title, color):
         indeces = range(1, len(categories)+1)
         vals = dpoints[dpoints[:,0] == cond][:,2].astype(np.float)
         pos = [j - (1 - space) / 2. + i * width for j in indeces]
-        ax.bar(pos, vals, width=width, label=cond,
-               color=color[conditions[i]]) #cm.Accent(float(i) / n))
+        ax.bar(pos, vals, width=width, label=cond, color=color[conditions[i]]) #cm.Accent(float(i) / n))
 
     # Set the x-axis tick labels to be equal to the categories
     ax.set_xticks(indeces)

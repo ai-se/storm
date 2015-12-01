@@ -19,8 +19,7 @@ class ProblemFrame():
     def get_extreme_points(self, number_of_generations):
         """This method should be used to find the extreme points of particular generation across all the algorithms"""
         from Techniques.flatten_list import flatten
-        points = flatten(
-            [d.get_frontiers_collection(number) for number in xrange(number_of_generations) for d in self.data])
+        points = flatten([d.get_frontiers_collection(number_of_generations) for d in self.data])
         objectives = [point.objectives for point in points]
         maps_objectives = [[-1 for _ in objectives] for _ in objectives]
         from Techniques.euclidean_distance import euclidean_distance

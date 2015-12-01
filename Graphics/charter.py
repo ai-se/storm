@@ -163,7 +163,7 @@ def joes_diagrams(problems, algorithms, Configurations, tag="JoeDiagram"):
                 cla()
 
 
-def hypervolume_graphs(problems, algorithms, Configurations, tag="HyperVolume"):
+def hypervolume_graphs(problems, algorithms, Configurations, aggregate_measure=mean, tag="HyperVolume"):
     def get_data_from_archive(problems, algorithms, Configurations, function):
         from PerformanceMeasures.DataFrame import ProblemFrame
         problem_dict = {}
@@ -182,6 +182,9 @@ def hypervolume_graphs(problems, algorithms, Configurations, tag="HyperVolume"):
                         repeat_dict[str(repeat)] = {}
                         if len(candidates) > 0:
                             repeat_dict[str(repeat)]["HyperVolume"] = function(reference_point, candidates)
+                            if repeat_dict[str(repeat)]["HyperVolume"] == 0:
+                                import pdb
+                                pdb.set_trace()
                             repeat_dict[str(repeat)]["Evaluations"] = evaluations[algorithm.name][repeat]
                         else:
                             repeat_dict[str(repeat)]["HyperVolume"] = None
@@ -213,11 +216,10 @@ def hypervolume_graphs(problems, algorithms, Configurations, tag="HyperVolume"):
 
                 assert(len(hypervolume_list) == len(evaluation_list)), "Something is wrong"
                 if len(hypervolume_list) > 0 and len(evaluation_list) > 0:
-                    median_scores.append(mean(hypervolume_list))
-                    median_evals.append(mean(old_evals))
+                    median_scores.append(aggregate_measure(hypervolume_list))
+                    median_evals.append(aggregate_measure(old_evals))
 
-            # print "Problem: ", problem.name, " Algorithm: ", algorithm.name, " Mean HyperVolume: ", mean(median_scores)
-            scores[algorithm.name] = mean(median_scores)
+            scores[algorithm.name] = aggregate_measure(median_scores)
             axarr.plot(median_evals, median_scores, linestyle='None', label=algorithm.name, marker=algorithm.type, color=algorithm.color, markersize=8, markeredgecolor='none')
             axarr.plot(median_evals, median_scores, color=algorithm.color)
             # axarr[o].set_ylim(0, 130)
@@ -237,7 +239,7 @@ def hypervolume_graphs(problems, algorithms, Configurations, tag="HyperVolume"):
 
     return problem_scores
 
-def spread_graphs(problems, algorithms, Configurations, tag="Spread"):
+def spread_graphs(problems, algorithms, Configurations,aggregate_measure=mean, tag="Spread"):
     def get_data_from_archive(problems, algorithms, Configurations, function):
         from PerformanceMeasures.DataFrame import ProblemFrame
         problem_dict = {}
@@ -286,11 +288,11 @@ def spread_graphs(problems, algorithms, Configurations, tag="Spread"):
 
                 assert(len(hypervolume_list) == len(evaluation_list)), "Something is wrong"
                 if len(hypervolume_list) > 0 and len(evaluation_list) > 0:
-                    median_scores.append(mean(hypervolume_list))
-                    median_evals.append(mean(old_evals))
+                    median_scores.append(aggregate_measure(hypervolume_list))
+                    median_evals.append(aggregate_measure(old_evals))
 
             # print "Problem: ", problem.name, " Algorithm: ", algorithm.name, " Mean HyperVolume: ", mean(median_scores)
-            scores[algorithm.name] = mean(median_scores)
+            scores[algorithm.name] = aggregate_measure(median_scores)
             axarr.plot(median_evals, median_scores, linestyle='None', label=algorithm.name, marker=algorithm.type, color=algorithm.color, markersize=8, markeredgecolor='none')
             axarr.plot(median_evals, median_scores, color=algorithm.color)
             # axarr[o].set_ylim(0, 130)
@@ -310,7 +312,7 @@ def spread_graphs(problems, algorithms, Configurations, tag="Spread"):
     return problem_scores
 
 
-def statistic_reporter(problems, algorithms, Configurations, tag="RunTimes"):
+def statistic_reporter(problems, algorithms, Configurations,aggregate_measure=mean,  tag="RunTimes"):
     def get_filename():
         from time import strftime
         date_folder_prefix = strftime("%m-%d-%Y")
@@ -359,15 +361,14 @@ def statistic_reporter(problems, algorithms, Configurations, tag="RunTimes"):
             algorithm_result[extracted_algorithm.attrib["name"]] = run_result
         results[extracted_problem.attrib["name"]] = algorithm_result
 
-
     for problem in problems:
         algorithm_name = []
         average_runtime = []
         average_evaluation = []
         for a, algorithm in enumerate(algorithms):
             algorithm_name.append(algorithm.name)
-            average_runtime.append(mean([float(results[problem.name][algorithm.name][str(r+1)]["run_time"]) for r in xrange(Configurations["Universal"]["Repeats"])]))
-            average_evaluation.append(mean([float(results[problem.name][algorithm.name][str(r+1)]["evaluation"]) for r in xrange(Configurations["Universal"]["Repeats"])]))
+            average_runtime.append(aggregate_measure([float(results[problem.name][algorithm.name][str(r+1)]["run_time"]) for r in xrange(Configurations["Universal"]["Repeats"])]))
+            average_evaluation.append(aggregate_measure([float(results[problem.name][algorithm.name][str(r+1)]["evaluation"]) for r in xrange(Configurations["Universal"]["Repeats"])]))
 
         draw(problem.name, average_runtime, algorithm_name, "Runtimes")
         draw(problem.name, average_evaluation, algorithm_name, "Evaluations")
@@ -400,9 +401,10 @@ def comparision_reporter(problems, algorithms, list_hypervolume_scores, list_spr
 
 
 def charter_reporter(problems, algorithms, Configurations, tag=""):
-
-    hypervolume_scores = hypervolume_graphs(problems, algorithms, Configurations)
-    spread_scores = spread_graphs(problems, algorithms, Configurations)
+    import sys
+    sys.setrecursionlimit(10000)
+    hypervolume_scores = hypervolume_graphs(problems, algorithms, Configurations, aggregate_measure=median)
+    spread_scores = spread_graphs(problems, algorithms, Configurations)#, aggregate_measure=median)
     joes_diagrams(problems, algorithms, Configurations)
     return [hypervolume_scores, spread_scores]
 
