@@ -59,6 +59,7 @@ def gale_nm_Mutate(problem, NDLeafs, configuration):
     # Mutation Phase
     #################
 
+    number_of_evaluation = 0
     # After mutation; Convert back to JMOO Data Structures
     population = []
     for leaf in NDLeafs:
@@ -66,11 +67,22 @@ def gale_nm_Mutate(problem, NDLeafs, configuration):
             if row.evaluated:
                 population.append(jmoo_individual(problem, [x for x in row.cells[:len(problem.decisions)]],
                                                   [x for x in row.cells[len(problem.decisions):]]))
+                number_of_evaluation += 1
             else:
                 population.append(jmoo_individual(problem, [x for x in row.cells[:len(problem.decisions)]], None))
 
-                # Return selectees and number of evaluations
-    return population, 0
+    if number_of_evaluation < 2:
+        while True:
+            from random import randint
+            index = randint(0, len(population) - 1)
+            if population[index].valid is not True:
+                population[index].evaluate()
+                number_of_evaluation +=1
+                break
+    if number_of_evaluation == 0:
+        return population, 0
+    else:
+        return population, number_of_evaluation
 
 
 def gale_nm_Regen(problem, unusedslot, mutants, configuration):

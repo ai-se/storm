@@ -167,8 +167,8 @@ def jmoo_evo(problem, algorithm, configurations, toStop = bstop):
         # # # # # # # # # # #
         # 4d) Collect Stats #
         # # # # # # # # # # #
-        if algorithm.name == "GALE0":
-            statBox.update(selectees, gen, numNewEvals)
+        if algorithm.name == "GALE0" or algorithm.name == "GALE_no_mutation":
+            statBox.update(selectees, gen, numNewEvals, population_size=Configurations["Universal"]["Population_Size"])
             store_values(latest_subdir, gen, selectees)
         else:
             statBox.update(population, gen, numNewEvals)

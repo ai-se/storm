@@ -33,7 +33,7 @@ def generate_summary(problems, algorithms, baseline, Configurations, tag="Compar
         print problem.name , " - " * 50
         from PerformanceMeasures.DataFrame import ProblemFrame
         data = ProblemFrame(problem, algorithms)
-        population = data.get_frontier_values(Configurations["Universal"]["No_of_Generations"] - 1)
+        population = data.get_frontier_values()
 
         fast_algorithm_population = []
         for repeat in xrange(Configurations["Universal"]["Repeats"]):
@@ -49,11 +49,8 @@ def generate_summary(problems, algorithms, baseline, Configurations, tag="Compar
                     baseline_population.append([pop.objectives for pop in population[algorithm.name][repeat]])
                 for objective_number in xrange(len(problem.objectives)):
                     fast_algorithm_objective_list = [flat[objective_number] for fap in fast_algorithm_population for flat in fap]
-                    try:
-                        baseline_objective_list = [flat[objective_number]  for bp in baseline_population for flat in bp]
-                    except:
-                        import pdb
-                        pdb.set_trace()
+                    baseline_objective_list = [flat[objective_number]  for bp in baseline_population for flat in bp]
+
                     from numpy import std, mean
                     s = std(baseline_objective_list)
                     small_effect = s * 0.4

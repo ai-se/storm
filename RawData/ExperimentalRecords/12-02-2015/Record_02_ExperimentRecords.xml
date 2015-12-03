@@ -1,0 +1,36 @@
+<Experiment>
+<Problem name = 'Web_Portal'>
+<Algorithm name = 'GALE_no_mutation'>
+<Run id = '1'>
+<Summary>
+<NumEvals>136</NumEvals>
+<RunTime>9.00473713875</RunTime>
+<IBD>0.963963829203</IBD>
+<IBS>0.0</IBS>
+<number_of_features>22</number_of_features>
+<constrained_violated>0</constrained_violated>
+<cost>9.31193339544</cost>
+</Summary></Run>
+<Run id = '2'>
+<Summary>
+<NumEvals>147</NumEvals>
+<RunTime>9.10540509224</RunTime>
+<IBD>0.966650737014</IBD>
+<IBS>0.00954287014021</IBS>
+<number_of_features>30</number_of_features>
+<constrained_violated>0</constrained_violated>
+<cost>5.28483243</cost>
+</Summary></Run>
+<Run id = '3'>
+<Summary>
+<NumEvals>147</NumEvals>
+<RunTime>8.97525501251</RunTime>
+<IBD>0.963965776056</IBD>
+<IBS>0.0</IBS>
+<number_of_features>27</number_of_features>
+<constrained_violated>0</constrained_violated>
+<cost>7.68171984952</cost>
+</Summary></Run>
+</Algorithm>
+</Problem>
+</Experiment>

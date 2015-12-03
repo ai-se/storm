@@ -120,7 +120,11 @@ def joes_diagrams(problems, algorithms, Configurations, tag="JoeDiagram"):
                 for o, obj in enumerate(prob.objectives):
                     maxEvals = 0
                     for a,alg in enumerate(algorithms):
-                        maxEvals = max(maxEvals, max(data[p][a][0]))
+                        try:
+                            maxEvals = max(maxEvals, max(data[p][a][0]))
+                        except:
+                            import pdb
+                            pdb.set_trace()
                     for a,alg in enumerate(algorithms):
 
                         scores = {}
@@ -218,8 +222,19 @@ def hypervolume_graphs(problems, algorithms, Configurations, aggregate_measure=m
                 if len(hypervolume_list) > 0 and len(evaluation_list) > 0:
                     median_scores.append(aggregate_measure(hypervolume_list))
                     median_evals.append(aggregate_measure(old_evals))
+                    # if algorithm.name == "GALE_no_mutation":
+                    #     # print hypervolume_list, aggregate_measure(hypervolume_list)
+                    #     # print ">> ", old_evals, aggregate_measure(old_evals)
+                    #     print "scores : ", median_scores
+                    #     print "evals : ", median_evals
+
+
 
             scores[algorithm.name] = aggregate_measure(median_scores)
+            # if algorithm.name == "GALE_no_mutation":
+            #     print median_evals
+            #     print ">> ", median_scores, id(median_scores)
+            #     exit()
             axarr.plot(median_evals, median_scores, linestyle='None', label=algorithm.name, marker=algorithm.type, color=algorithm.color, markersize=8, markeredgecolor='none')
             axarr.plot(median_evals, median_scores, color=algorithm.color)
             # axarr[o].set_ylim(0, 130)
@@ -257,8 +272,12 @@ def spread_graphs(problems, algorithms, Configurations,aggregate_measure=mean, t
                         candidates = [pop.objectives for pop in population[algorithm.name][repeat]]
                         repeat_dict[str(repeat)] = {}
                         if len(candidates) > 0:
-                            repeat_dict[str(repeat)]["Spread"] = function(candidates, extreme_point1, extreme_point2)
-                            repeat_dict[str(repeat)]["Evaluations"] = evaluations[algorithm.name][repeat]
+                            try:
+                                repeat_dict[str(repeat)]["Spread"] = function(candidates, extreme_point1, extreme_point2)
+                                repeat_dict[str(repeat)]["Evaluations"] = evaluations[algorithm.name][repeat]
+                            except:
+                                import pdb
+                                pdb.set_trace()
                         else:
                             repeat_dict[str(repeat)]["Spread"] = None
                             repeat_dict[str(repeat)]["Evaluations"] = None
@@ -404,7 +423,6 @@ def charter_reporter(problems, algorithms, Configurations, tag=""):
     import sys
     sys.setrecursionlimit(10000)
     hypervolume_scores = hypervolume_graphs(problems, algorithms, Configurations, aggregate_measure=median)
-    spread_scores = spread_graphs(problems, algorithms, Configurations)#, aggregate_measure=median)
-    joes_diagrams(problems, algorithms, Configurations)
+    spread_scores = spread_graphs(problems, algorithms, Configurations, aggregate_measure=median)
     return [hypervolume_scores, spread_scores]
 

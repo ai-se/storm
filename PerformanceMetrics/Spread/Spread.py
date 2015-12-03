@@ -32,7 +32,11 @@ def spread_calculator(obtained_front, extreme_point1, extreme_point2):
     _, dl = closest(obtained_front, extreme_point2)
 
     distances = [euclidean_distance(obtained_front[i], obtained_front[i+1]) for i in xrange(len(obtained_front) -1)]
-    distances_mean = sum(distances)/len(distances)
+    try:
+        distances_mean = sum(distances)/len(distances)
+    except:
+        import pdb
+        pdb.set_trace()
     d_variance = sum([abs(di - distances_mean) for di in distances])
     N = len(obtained_front)
 

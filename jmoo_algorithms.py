@@ -106,7 +106,7 @@ class jmoo_GALE0:
         self.type = '*'
 
 class jmoo_GALE_no_mutation:
-    def __init__(self, color="Green"):
+    def __init__(self, color="Orange"):
         self.name = "GALE_no_mutation"
         self.initializer = None
         self.selector = gale_nm_WHERE

@@ -81,13 +81,19 @@ class jmoo_stats_box:
         statBox.lives = 3
         statBox.reference_point_for_hypervolume = None
     
-    def update(statBox, population, gen, num_new_evals, initial = False, printOption=True):
+    def update(statBox, population, gen, num_new_evals, initial = False, population_size=None, printOption=True):
         "add a stat box - compute the statistics first"
 
         # Find a file name to write the stats to
-        filename = "Data/results_"+statBox.problem.name + "-p" + str(len(population)) + "-d" + \
+        if (statBox.alg.name == "GALE0" or statBox.alg.name == "GALE_no_mutation") and population_size is not None:
+            filename = "Data/results_"+statBox.problem.name + "-p" + str(population_size) + "-d" + \
                    str(len(statBox.problem.decisions)) + "-o" + str(len(statBox.problem.objectives))+\
                    "_"+statBox.alg.name+".datatable"
+        else:
+            filename = "Data/results_"+statBox.problem.name + "-p" + str(len(population)) + "-d" + \
+                       str(len(statBox.problem.decisions)) + "-o" + str(len(statBox.problem.objectives))+\
+                       "_"+statBox.alg.name+".datatable"
+
         fa = open(filename, 'a')
 
         # Update Number of Evaluations

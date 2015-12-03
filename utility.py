@@ -116,16 +116,16 @@ def matrix_var(matrix):
 def getPercentile(list, percentile):
     import math
     # sort the list
-    list.sort()
+    list1 = sorted(list)
 
-    k = (len(list) - 1) * (percentile / 100.0)
+    k = (len(list1) - 1) * (percentile / 100.0)
     f = math.floor(k)
     c = math.ceil(k)
     if f == c:
-        val = list[int(k)]
+        val = list1[int(k)]
     else:
-        d0 = list[int(f)] * (c - k)
-        d1 = list[int(c)] * (k - f)
+        d0 = list1[int(f)] * (c - k)
+        d1 = list1[int(c)] * (k - f)
         val = d0 + d1
     return val
 

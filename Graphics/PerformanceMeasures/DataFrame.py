@@ -53,7 +53,7 @@ class ProblemFrame():
                 reference_point[count] = min(one_objective)
         return reference_point
 
-    def get_frontier_values(self, generation_number):
+    def get_frontier_values(self, generation_number=-1):
         result = {}
         for d in self.data: result[d.algorithm.name] = d.get_frontiers_for_generation(generation_number)
         return result
@@ -80,7 +80,7 @@ class AlgorithmFrame():
     def get_frontiers_collection(self, number):
         return [item for repeat in self.repeats for item in repeat.get_frontier(number)]
 
-    def get_frontiers_for_generation(self, number):
+    def get_frontiers_for_generation(self, number=-1):
         return [repeat.get_frontier(number) for repeat in self.repeats]
 
     def get_evaluations_for_generation(self, number):
