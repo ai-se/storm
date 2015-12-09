@@ -55,8 +55,9 @@ algorithms = [
               jmoo_MOEAD_TCH(),
               jmoo_NSGAIII(),
               jmoo_GALE_no_mutation(),
-              # jmoo_NSGAII(),
-              # jmoo_SPEA2(),
+              jmoo_NSGAII(),
+              jmoo_SPEA2(),
+                jmoo_GALE4(),
               # jmoo_DE(),
               # jmoo_MOEAD_TCH(),
               # jmoo_NSGAIII(),
@@ -70,14 +71,14 @@ problems =[
     #  zdt3(),
     # golinski(), zdt6()
     # srinivas()
-    POM3B(),
-    POM3A(),
-    POM3C(),
-    POM3D(),
-    # dtlz1(9, 5),
-    # dtlz2(14, 5),
-    # dtlz3(14, 5),
-    # dtlz4(14, 5),
+    # POM3B(),
+    # POM3A(),
+    # POM3C(),
+    # POM3D(),
+    dtlz1(9, 5),
+    dtlz2(14, 5),
+    dtlz3(14, 5),
+    dtlz4(14, 5),
     # dtlz1(7, 3),
     # dtlz2(12, 3),
     # dtlz3(12, 3),
@@ -94,7 +95,7 @@ problems =[
     # dtlz2(24, 15),
     # dtlz3(24, 15),
     # dtlz4(24, 15)
-    XOMO_all(),
+    # XOMO_all(),
     # NRP(50, 5, 5, 20, 120)
     # FeatureTreeModel("Web_Portal", valid_solutions=True),
     # FeatureTreeModel("eshop", valid_solutions=True),
@@ -121,7 +122,7 @@ build_new_pop = False                                       # Whether or not to 
 
 Configurations = {
     "Universal": {
-        "Repeats" : 3,
+        "Repeats" : 5,
         "Population_Size" : 92,
         "No_of_Generations" : 20
     },

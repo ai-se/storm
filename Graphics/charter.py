@@ -123,8 +123,9 @@ def joes_diagrams(problems, algorithms, Configurations, tag="JoeDiagram"):
                         try:
                             maxEvals = max(maxEvals, max(data[p][a][0]))
                         except:
-                            import pdb
-                            pdb.set_trace()
+                            pass
+                            # import pdb
+                            # pdb.set_trace()
                     for a,alg in enumerate(algorithms):
 
                         scores = {}
@@ -254,6 +255,7 @@ def hypervolume_graphs(problems, algorithms, Configurations, aggregate_measure=m
 
     return problem_scores
 
+
 def spread_graphs(problems, algorithms, Configurations,aggregate_measure=mean, tag="Spread"):
     def get_data_from_archive(problems, algorithms, Configurations, function):
         from PerformanceMeasures.DataFrame import ProblemFrame
@@ -318,7 +320,7 @@ def spread_graphs(problems, algorithms, Configurations,aggregate_measure=mean, t
             axarr.set_autoscale_on(True)
             axarr.set_xlim([-10, 10000])
             axarr.set_xscale('log', nonposx='clip')
-            axarr.set_ylabel("HyperVolume")
+            axarr.set_ylabel("Spread")
         if not os.path.isdir('charts/' + date_folder_prefix):
             os.makedirs('charts/' + date_folder_prefix)
 
@@ -341,6 +343,7 @@ def statistic_reporter(problems, algorithms, Configurations,aggregate_measure=me
         from os.path import isfile, getmtime
         all_files = [folder_name + "/" + d for d in listdir(folder_name) if isfile(folder_name + "/" + d)]
         latest_file = sorted(all_files, key=getmtime)[-1]
+        print latest_file
         return latest_file
 
     def draw(title, y, names, tag=""):
@@ -424,5 +427,6 @@ def charter_reporter(problems, algorithms, Configurations, tag=""):
     sys.setrecursionlimit(10000)
     hypervolume_scores = hypervolume_graphs(problems, algorithms, Configurations, aggregate_measure=median)
     spread_scores = spread_graphs(problems, algorithms, Configurations, aggregate_measure=median)
+    joes_diagrams(problems, algorithms, Configurations)
     return [hypervolume_scores, spread_scores]
 
