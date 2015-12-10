@@ -232,8 +232,6 @@ def hypervolume_graphs(problems, algorithms, Configurations, aggregate_measure=m
                     #     print "scores : ", median_scores
                     #     print "evals : ", median_evals
 
-
-
             scores[algorithm.name] = aggregate_measure(median_scores)
             # if algorithm.name == "GALE_no_mutation":
             #     print median_evals
@@ -428,48 +426,10 @@ def comparision_reporter(problems, algorithms, list_hypervolume_scores, list_spr
 def charter_reporter(problems, algorithms, Configurations, tag=""):
     import sys
     sys.setrecursionlimit(10000)
-    hypervolume_for_final_frontier(problems, algorithms, Configurations, aggregate_measure=median)
+    # hypervolume_for_final_frontier(problems, algorithms, Configurations, aggregate_measure=median)
     hypervolume_scores = hypervolume_graphs(problems, algorithms, Configurations, aggregate_measure=median)
     spread_scores = spread_graphs(problems, algorithms, Configurations, aggregate_measure=median)
     joes_diagrams(problems, algorithms, Configurations)
     return [hypervolume_scores, spread_scores]
 
 
-def hypervolume_for_final_frontier(problems, algorithms, Configurations, aggregate_measure=median):
-    def get_reference_point(problem, objectives):
-        hell =[]
-        for i, obj in enumerate(problem.objectives):
-            if obj.lismore:
-                hell.append(max([o[i] for o in objectives]))
-            else:
-                hell.append(min(o[i] for o in objectives))
-        return hell
-
-    def get_data_from_archive(problems, algorithms, Configurations, function):
-        from PerformanceMeasures.DataFrame import ProblemFrame
-        problem_dict = {}
-        for problem in problems:
-            objectives = []
-            archive = {}
-            for algorithm in algorithms:
-                temp_alg = {}
-                for repeat in xrange(Configurations["Universal"]["Repeats"]):
-                    temp_repeat = {}
-                    foldername = "./RawData/PopulationArchives/" + algorithm.name + "_" + problem.name + "/" + str(repeat) + "/"
-                    last_front_file = sorted([os.path.join(foldername,d) for d in os.listdir(foldername)], key=os.path.getmtime)[-1]
-                    num_lines = sum(1 for _ in open(last_front_file))
-                    content = open(last_front_file).readlines()
-                    temp_repeat[str(repeat)] = [c[:-1*len(problem.objectives)] for c in content]
-                    for c in content:
-                        objectives.append(c[:-1*len(problem.objectives)])
-                    print last_front_file, num_lines
-                temp_alg[algorithm.name] = temp_repeat
-
-            problem_dict[problem.name] = temp_alg
-        import pdb
-        pdb.set_trace()
-
-
-    from PerformanceMetrics.Spread.Spread import spread_calculator
-    result = get_data_from_archive(problems, algorithms, Configurations, spread_calculator)
-    date_folder_prefix = strftime("%m-%d-%Y")

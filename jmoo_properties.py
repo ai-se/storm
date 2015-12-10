@@ -71,10 +71,11 @@ problems =[
     #  zdt3(),
     # golinski(), zdt6()
     # srinivas()
-    # POM3B(),
-    # POM3A(),
-    # POM3C(),
-    # POM3D(),
+    POM3B(),
+    POM3A(),
+    POM3C(),
+    POM3D(),
+    XOMO_all(),
     # dtlz1(9, 5),
     # dtlz2(14, 5),
     # dtlz3(14, 5),
@@ -95,12 +96,12 @@ problems =[
     # dtlz2(24, 15),
     # dtlz3(24, 15),
     # dtlz4(24, 15)
-    # XOMO_all(),
+
     # NRP(50, 5, 5, 20, 120)
-    FeatureTreeModel("Web_Portal", valid_solutions=True),
-    FeatureTreeModel("eshop", valid_solutions=True),
-    FeatureTreeModel("cellphone", valid_solutions=True),
-    FeatureTreeModel("EIS", valid_solutions=True),
+    # FeatureTreeModel("Web_Portal", valid_solutions=True),
+    # FeatureTreeModel("eshop", valid_solutions=True),
+    # FeatureTreeModel("cellphone", valid_solutions=True),
+    # FeatureTreeModel("EIS", valid_solutions=True),
     # FeatureTreeModel("Web_Portal"),
     # FeatureTreeModel("eshop"),
     # FeatureTreeModel("cellphone"),
