@@ -46,6 +46,9 @@ def extrapolate(problem, individuals, one, f, cf):
     from random import randint
     two, three, four = three_others(individuals, one)
     solution = []
+
+    # from Binary Differential Evolution Algorithm with New Mutation Operator
+
     if problem.is_binary is True:
         for d, decision in enumerate(problem.decisions):
             assert isinstance(two, jmoo_individual)
