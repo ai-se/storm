@@ -38,25 +38,26 @@ class jmoo_problem(object):
         prob.decisions = []
         prob.objectives = []
         prob.numEvals = 0
+        prob.is_binary = False
 
     def generateInput(prob):
         "a way to generate decisions for this problem"
         while True: # repeat if we don't meet constraints
-            temp_value = []
-            for decision in prob.decisions:
-                temp_value.append(random.uniform(decision.low, decision.up))
-            # if not prob.evalConstraints():
-            #     break
+            if prob.is_binary is True:
+                from random import randint
+                temp_value = [randint(0, 1) for _ in prob.decisions]
+            else:
+                temp_value = [random.uniform(decision.low, decision.up) for decision in prob.decisions]
             if prob.validate(temp_value) is True: break
         assert(prob.validate(temp_value) is True), "Something's wrong"
         # print "Initial Population Generation Complete"
         return temp_value
 
     def generateExtreme(prob):
-        
+
         for decision in prob.decisions:
             decision.value = decision.low
-            
+
         if prob.evalConstraints(): return prob.generateInput()
         return [decision.value for decision in prob.decisions]
 
@@ -76,7 +77,7 @@ class jmoo_problem(object):
         input = open(filename, 'rb')
         reader = csv.reader(input, delimiter=',')
         population = []
-        
+
         #Use the csv file to build the initial population
         for k,p in enumerate(reader):
             if k > MU:
@@ -95,17 +96,16 @@ class jmoo_problem(object):
                 #     problem.objectives[k-MU-1].low -= rangeX5
                 # if upnotfound:
                 #     problem.objectives[k-MU-1].up += rangeX5
-                
+
             elif k > 0:
                 population.append(jmoo_individual(problem,[float(p[n]) for n,dec in enumerate(problem.decisions)],None))
                 #population[-1].fitness = jmoo_fitness(problem, [float(p[n+len(problem.decisions)]) for n,obj in enumerate(problem.objectives)])
-            
-        
+
         return population
-    
+
     def buildHeader(prob):
         "a header used with rrsl in jmoo_algorithms.py"
-        
+
         header = ""
         for decision in prob.decisions:
             header += "$" + decision.name + ","
@@ -113,14 +113,21 @@ class jmoo_problem(object):
             if objective.lismore:
                 header += ">>" + objective.name + ","
             else:
-                header += "<<" + objective.name + ","          
+                header += "<<" + objective.name + ","
         return header[:len(header)-1]  # remove the last comma at the end
 
     def validate(prob, decision_value):
         assert(len(decision_value) == len(prob.decisions)), "Something is wrong with the usage of validate function"
-        for i, decision in enumerate(prob.decisions):
-            if decision.low <= decision_value[i] <= decision.up: pass
-            else: return False
+        if prob.is_binary is True:
+            flags = [True if (d == 1 or d == 0) else False for d in decision_value]
+            flags = reduce(lambda x, y: x and y, flags)
+            return flags
+        else:
+            for i, decision in enumerate(prob.decisions):
+                if decision.low <= decision_value[i] <= decision.up:
+                    pass
+                else:
+                    return False
         return True
 
 

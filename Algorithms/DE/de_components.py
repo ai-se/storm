@@ -46,12 +46,26 @@ def extrapolate(problem, individuals, one, f, cf):
     from random import randint
     two, three, four = three_others(individuals, one)
     solution = []
-    for d, decision in enumerate(problem.decisions):
-        assert isinstance(two, jmoo_individual)
-        x, y, z = two.decisionValues[d], three.decisionValues[d], four.decisionValues[d]
-        if random.random() < cf or randint(0, len(problem.decisions)) == d:
-            solution.append(trim(x + f * (y - z), decision.low, decision.up))
-        else: solution.append(one.decisionValues[d])
+    if problem.is_binary is True:
+        for d, decision in enumerate(problem.decisions):
+            assert isinstance(two, jmoo_individual)
+            x, y, z = two.decisionValues[d], three.decisionValues[d], four.decisionValues[d]
+            if random.random() < cf:
+                if x == 0 or x == 1:
+                    solution.append(1 - x)
+                else:
+                    solution.append(1 - x)
+            else:
+                solution.append(one.decisionValues[d])
+
+    else:
+        for d, decision in enumerate(problem.decisions):
+            assert isinstance(two, jmoo_individual)
+            x, y, z = two.decisionValues[d], three.decisionValues[d], four.decisionValues[d]
+            if random.random() < cf or randint(0, len(problem.decisions)) == d:
+                solution.append(trim(x + f * (y - z), decision.low, decision.up))
+            else:
+                solution.append(one.decisionValues[d])
 
     return jmoo_individual(problem, [float(d) for d in solution], None)
 
