@@ -1,3 +1,4 @@
+from __future__ import division
 #    Copyright (C) 2010 Simon Wessing
 #    TU Dortmund University
 #
@@ -282,10 +283,68 @@ class MultiList:
                 bounds[i] = node.cargo[i]
 
 
-def get_hyper_volume(reference_point, results):
+def get_hyper_volume(problem, reference_point, results, Configurations):
     """Receives list of  lists"""
 
-    HV = HyperVolume(reference_point)
+    # +The results should only be the non dominated points
+
+    # non dominated sorting
+    from jmoo_algorithms import deap_format
+    dIndividuals = deap_format(problem, results)
+
+    # get only the first front
+    from Algorithms.DEAP.tools.emo import sortNondominated
+    first_front = sortNondominated(dIndividuals, len(dIndividuals), first_front_only=True)
+
+    from itertools import chain
+    chosen = list(chain(*first_front))
+
+    # Copy from DEAP structure to JMOO structure
+    from jmoo_individual import jmoo_individual
+    population = []
+    for i, dIndividual in enumerate(chosen):
+        cells = []
+        for j in range(len(dIndividual)):
+            cells.append(dIndividual[j])
+        population.append(jmoo_individual(problem, cells, [f for f in dIndividual.fitness.values]))
+
+    # +The results should only be the non dominated points
+
+    # Find the min and max of the objectives
+    MU = Configurations["Universal"]["Population_Size"]
+    # Normalization
+    filename = "Data/" + problem.name + "-p" + str(MU) + "-d" + str(len(problem.decisions)) + "-o" + \
+               str(len(problem.objectives)) + "-dataset.txt"
+
+    import csv
+    input = open(filename, 'rb')
+    reader = csv.reader(input, delimiter=',')
+
+    #Use the csv file to build the initial population
+    for k,p in enumerate(reader):
+        if k > MU:
+            problem.objectives[k-MU-1].med = float(p[1])
+            low_not_found = False
+            up_not_found = False
+
+            if problem.objectives[k-MU-1].low is None:
+                problem.objectives[k-MU-1].low = float(p[0])
+                low_not_found = True
+            if problem.objectives[k-MU-1].up is None:
+                problem.objectives[k-MU-1].up = float(p[2])
+                up_not_found = True
+            rangeX5 = (problem.objectives[k-MU-1].up - problem.objectives[k-MU-1].low)*5
+            if low_not_found: problem.objectives[k-MU-1].low -= rangeX5
+            if up_not_found: problem.objectives[k-MU-1].up += rangeX5
+
+    # convert the objectives as list of list
+    results = [[(f-problem.objectives[i].low)/(problem.objectives[i].up - problem.objectives[i].low)
+                for i, f in enumerate(pop.fitness.fitness)] for pop in population]
+
+    normalized_reference_point = [1 for _ in reference_point]
+
+    
+    HV = HyperVolume(normalized_reference_point)
     return HV.compute(results)
 
 if __name__ == "__main__":

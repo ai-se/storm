@@ -169,6 +169,7 @@ def joes_diagrams(problems, algorithms, Configurations, tag="JoeDiagram"):
 
 
 def hypervolume_graphs(problems, algorithms, Configurations, aggregate_measure=mean, tag="HyperVolume"):
+    from jmoo_individual import jmoo_individual
     def get_data_from_archive(problems, algorithms, Configurations, function):
         from PerformanceMeasures.DataFrame import ProblemFrame
         problem_dict = {}
@@ -184,13 +185,13 @@ def hypervolume_graphs(problems, algorithms, Configurations, aggregate_measure=m
                     repeat_dict = {}
                     for repeat in xrange(Configurations["Universal"]["Repeats"]):
                         try:
-                            candidates = [pop.objectives for pop in population[algorithm.name][repeat]]
+                            candidates = [jmoo_individual(problem, pop.decisions, pop.objectives) for pop in population[algorithm.name][repeat]]
                         except:
                             import pdb
                             pdb.set_trace()
                         repeat_dict[str(repeat)] = {}
                         if len(candidates) > 0:
-                            repeat_dict[str(repeat)]["HyperVolume"] = function(reference_point, candidates)
+                            repeat_dict[str(repeat)]["HyperVolume"] = function(problem, reference_point, candidates, Configurations)
                             if repeat_dict[str(repeat)]["HyperVolume"] == 0:
                                 pass
                             repeat_dict[str(repeat)]["Evaluations"] = evaluations[algorithm.name][repeat]
@@ -233,10 +234,20 @@ def hypervolume_graphs(problems, algorithms, Configurations, aggregate_measure=m
                     #     print "evals : ", median_evals
 
             scores[algorithm.name] = aggregate_measure(median_scores)
-            # if algorithm.name == "GALE_no_mutation":
-            #     print median_evals
-            #     print ">> ", median_scores, id(median_scores)
-            #     exit()
+            # Final Frontier
+
+            scores[algorithm.name] = []
+            temp_score = []
+            for repeat in xrange(Configurations["Universal"]["Repeats"]):
+                last_score = None
+                for generation in xrange(Configurations["Universal"]["No_of_Generations"]):
+                    if result[problem.name][str(generation)][algorithm.name][str(repeat)]["HyperVolume"] is None:break
+                    else:
+                        last_score = result[problem.name][str(generation)][algorithm.name][str(repeat)]["HyperVolume"]
+                temp_score.append(last_score)
+            scores[algorithm.name] = aggregate_measure(temp_score)
+
+
             axarr.plot(median_evals, median_scores, linestyle='None', label=algorithm.name, marker=algorithm.type, color=algorithm.color, markersize=8, markeredgecolor='none')
             axarr.plot(median_evals, median_scores, color=algorithm.color)
             # axarr[o].set_ylim(0, 130)
@@ -313,8 +324,18 @@ def spread_graphs(problems, algorithms, Configurations,aggregate_measure=mean, t
                     median_scores.append(aggregate_measure(hypervolume_list))
                     median_evals.append(aggregate_measure(old_evals))
 
-            # print "Problem: ", problem.name, " Algorithm: ", algorithm.name, " Mean HyperVolume: ", mean(median_scores)
-            scores[algorithm.name] = aggregate_measure(median_scores)
+            # Final Frontier
+            scores[algorithm.name] = []
+            temp_score = []
+            for repeat in xrange(Configurations["Universal"]["Repeats"]):
+                last_score = None
+                for generation in xrange(Configurations["Universal"]["No_of_Generations"]):
+                    if result[problem.name][str(generation)][algorithm.name][str(repeat)]["Spread"] is None:break
+                    else:
+                        last_score = result[problem.name][str(generation)][algorithm.name][str(repeat)]["Spread"]
+                temp_score.append(last_score)
+            scores[algorithm.name] = aggregate_measure(temp_score)
+
             axarr.plot(median_evals, median_scores, linestyle='None', label=algorithm.name, marker=algorithm.type, color=algorithm.color, markersize=8, markeredgecolor='none')
             axarr.plot(median_evals, median_scores, color=algorithm.color)
             # axarr[o].set_ylim(0, 130)
