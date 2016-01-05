@@ -147,7 +147,10 @@ class FeatureTreeModel(jmoo_problem):
             obj3 = sum([t.cost[i] for i,f in enumerate(t.features) if (fulfill[i] == 1 and f.node_type != 'g')])
 
             if return_fulfill is False:
-                return [obj1, obj2, obj3]
+                output = [obj1, obj2, obj3]
+                for i, objective in enumerate(self.objectives):
+                    objective.value = output[i]
+                return output
             else:
                 return [obj1, obj2, obj3], fulfill
         else:

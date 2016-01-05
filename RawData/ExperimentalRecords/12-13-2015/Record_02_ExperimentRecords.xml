@@ -1,0 +1,80 @@
+<Experiment>
+<Problem name = 'DTLZ1_9_5'>
+<Algorithm name = 'GALE'>
+<Run id = '1'>
+<Summary>
+<NumEvals>107</NumEvals>
+<RunTime>1.02888798714</RunTime>
+<IBD>0.934613412893</IBD>
+<IBS>0.025972806721</IBS>
+<f1>0.0869075959973</f1>
+<f2>0.0386621542626</f2>
+<f3>0.63013213863</f3>
+<f4>24.2198113763</f4>
+<f5>206.812690676</f5>
+</Summary></Run>
+<Run id = '2'>
+<Summary>
+<NumEvals>104</NumEvals>
+<RunTime>1.02723503113</RunTime>
+<IBD>0.96997308506</IBD>
+<IBS>0.0572283994566</IBS>
+<f1>0.969360004443</f1>
+<f2>0.322542341481</f2>
+<f3>2.20338096806</f3>
+<f4>0.571879870159</f4>
+<f5>217.279163501</f5>
+</Summary></Run>
+<Run id = '3'>
+<Summary>
+<NumEvals>50</NumEvals>
+<RunTime>0.498178005219</RunTime>
+<IBD>0.95601272663</IBD>
+<IBS>0.029347196026</IBS>
+<f1>19.1317740495</f1>
+<f2>0.657463216027</f2>
+<f3>0.618521591772</f3>
+<f4>6.62686574851</f4>
+<f5>56.88408362</f5>
+</Summary></Run>
+</Algorithm>
+<Algorithm name = 'DE'>
+<Run id = '1'>
+<Summary>
+<NumEvals>1840</NumEvals>
+<RunTime>0.31675696373</RunTime>
+<IBD>0.860006566463</IBD>
+<IBS>0.0081929228297</IBS>
+<f1>0.0</f1>
+<f2>0.0</f2>
+<f3>0.0</f3>
+<f4>0.0</f4>
+<f5>26.1410850141</f5>
+</Summary></Run>
+<Run id = '2'>
+<Summary>
+<NumEvals>1656</NumEvals>
+<RunTime>0.292229890823</RunTime>
+<IBD>0.900761531279</IBD>
+<IBS>0.0093185393984</IBS>
+<f1>0.0147382214258</f1>
+<f2>0.0633650547508</f2>
+<f3>0.196088285562</f3>
+<f4>0.485282166137</f4>
+<f5>31.1232324463</f5>
+</Summary></Run>
+<Run id = '3'>
+<Summary>
+<NumEvals>828</NumEvals>
+<RunTime>0.151839017868</RunTime>
+<IBD>0.965761327545</IBD>
+<IBS>0.0174479387963</IBS>
+<f1>0.169988973005</f1>
+<f2>0.363964497063</f2>
+<f3>2.32716649787</f3>
+<f4>1.09541757208</f4>
+<f5>34.0543493323</f5>
+</Summary></Run>
+</Algorithm>
+</Problem>
+</Experiment>

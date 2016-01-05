@@ -105,9 +105,15 @@ class MONRP(jmoo_problem):
             assert(len(x_i) == len(y_i)), "Both the list should be of the same size"
             temp = self.constraint1(x_i, y_i)  # This is dirty need to know a better trick
             if temp != 0:
-                return [temp, 1e32, 0]
+                output = [temp, 1e32, 0]
+                for i, objective in enumerate(self.objectives):
+                    objective.value = output[i]
+                return output
             elif self.constraint2(x_i, y_i) is False:
-                return [0, 1e32, 0]
+                output = [0, 1e32, 0]
+                for i, objective in enumerate(self.objectives):
+                    objective.value = output[i]
+                return output
             else:
                 return_score = 0
                 cost = 0
@@ -125,10 +131,11 @@ class MONRP(jmoo_problem):
                         if y_i != 0:
                             satisfaction += self.client[c].importance[i]
 
+                output = [return_score, cost, satisfaction]
+                for i, objective in enumerate(self.objectives):
+                    objective.value = output[i]
+                return output
 
-
-
-                return [return_score, cost, satisfaction]
         else:
             assert(False), "BOOM"
             exit()

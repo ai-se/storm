@@ -16,7 +16,7 @@ class NRP(jmoo_problem):
         self.name = "NRP_" + str(requirements) + "_" + str(releases) + "_" + str(clients) + "_" +str(density) \
                     + "_" + str(budget)
         names = ["x"+str(i+1) for i in range(requirements)] # |x_i + y_i|
-        lows =  [-1 for i in xrange(requirements)]
+        lows =  [-1 for _ in xrange(requirements)]
         ups =   [(releases-1) for _ in xrange(requirements)]
         self.decisions = [jmoo_decision(names[i], lows[i], ups[i]) for i in range(requirements)]
         self.objectives = [jmoo_objective("f1", False)]#, jmoo_objective("f2", False)]  # single objective nrp
@@ -102,8 +102,10 @@ class NRP(jmoo_problem):
             assert(len(x_i) == len(y_i)), "Both the list should be of the same size"
             temp = self.constraint1(x_i, y_i)  # This is dirty need to know a better trick
             if temp != 0:
+                self.objective[0].value = temp
                 return [temp]
             elif self.constraint2(x_i, y_i) is False:
+                self.objective[0].value = 0
                 return [0]
             else:
                 return_score = 0
@@ -111,6 +113,7 @@ class NRP(jmoo_problem):
                     score = sum([j.importance[i] * j.weight for j in self.client])
                     x = x_i[i]
                     return_score += (score * (self.treleases - x + 1) - self.requirement[i].risk) * y_i[i]
+                self.objective[0].value = return_score
                 return [return_score]
         else:
             assert(False), "BOOM"
