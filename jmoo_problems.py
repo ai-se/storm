@@ -291,6 +291,8 @@ class golinski(jmoo_problem):
 class zdt1(jmoo_problem):
     "ZDT1"
     def __init__(prob):
+
+        super(zdt1, prob).__init__()
         prob.name = "ZDT1"
         names = ["x" + str(i+1) for i in range(30)]
         prob.decisions = [jmoo_decision(names[i], 0, 1) for i in range(len(names))]
@@ -669,6 +671,8 @@ class osyczka2(jmoo_problem):
 class dtlz1(jmoo_problem):
     "DTLZ1"
     def __init__(prob, numDecs=5, numObjs=2):
+
+        super(dtlz1, prob).__init__()
         prob.name = "DTLZ1_" + str(numDecs) + "_" + str(numObjs)
         names = ["x"+str(i+1) for i in range(numDecs)]
         lows =  [0.0 for i in range(numDecs)]
@@ -716,6 +720,7 @@ class dtlz1(jmoo_problem):
 class dtlz2(jmoo_problem):
     "DTLZ2"
     def __init__(prob, numDecs=10, numObjs=2):
+        super(dtlz2, prob).__init__()
         prob.name = "DTLZ2_" + str(numDecs) + "_" + str(numObjs)
         names = ["x"+str(i+1) for i in range(numDecs)]
         lows =  [0.0 for i in range(numDecs)]
@@ -759,6 +764,7 @@ class dtlz2(jmoo_problem):
 class dtlz3(jmoo_problem):
     "DTLZ3"
     def __init__(prob, numDecs=10, numObjs=2):
+        super(dtlz3, prob).__init__()
         prob.name = "DTLZ3_" + str(numDecs) + "_" + str(numObjs)
         names = ["x"+str(i+1) for i in range(numDecs)]
         lows =  [0.0 for i in range(numDecs)]
@@ -802,6 +808,7 @@ class dtlz3(jmoo_problem):
 class dtlz4(jmoo_problem):
     "DTLZ4"
     def __init__(prob, numDecs=10, numObjs=2):
+        super(dtlz4, prob).__init__()
         prob.name = "DTLZ4_" + str(numDecs) + "_" + str(numObjs)
         names = ["x"+str(i+1) for i in range(numDecs)]
         lows =  [0.0 for i in range(numDecs)]
@@ -844,6 +851,7 @@ class dtlz4(jmoo_problem):
 class dtlz5(jmoo_problem):
     "DTLZ5"
     def __init__(prob, numDecs=10, numObjs=2):
+        super(dtlz5, prob).__init__()
         prob.name = "DTLZ5"
         names = ["x"+str(i+1) for i in range(numDecs)]
         lows =  [0.0 for i in range(numDecs)]
@@ -890,6 +898,8 @@ class dtlz5(jmoo_problem):
 class dtlz6(jmoo_problem):
     "DTLZ6"
     def __init__(prob, numDecs=20, numObjs=2):
+
+        super(dtlz6, prob).__init__()
         prob.name = "DTLZ6"
         names = ["x"+str(i+1) for i in range(numDecs)]
         lows =  [0.0 for i in range(numDecs)]

@@ -1,0 +1,91 @@
+<Experiment>
+<Problem name = 'ZDT1'>
+<Algorithm name = 'GALE'>
+<Run id = '1'>
+<Summary>
+<NumEvals>70</NumEvals>
+<RunTime>2.45971894264</RunTime>
+<IBD>0.886819313355</IBD>
+<IBS>0.150390122667</IBS>
+<f1>0.174840843442</f1>
+<f2>3.96974755338</f2>
+</Summary></Run>
+<Run id = '2'>
+<Summary>
+<NumEvals>63</NumEvals>
+<RunTime>1.99862313271</RunTime>
+<IBD>0.921528966286</IBD>
+<IBS>0.0126628983486</IBS>
+<f1>0.441340259593</f1>
+<f2>3.63135020903</f2>
+</Summary></Run>
+<Run id = '3'>
+<Summary>
+<NumEvals>72</NumEvals>
+<RunTime>2.37427401543</RunTime>
+<IBD>0.790094466695</IBD>
+<IBS>0.00828673987917</IBS>
+<f1>0.131432450495</f1>
+<f2>4.01993707244</f2>
+</Summary></Run>
+</Algorithm>
+<Algorithm name = 'NSGAII'>
+<Run id = '1'>
+<Summary>
+<NumEvals>2944</NumEvals>
+<RunTime>0.882733106613</RunTime>
+<IBD>0.827752381981</IBD>
+<IBS>0.0224198151662</IBS>
+<f1>0.0309519265163</f1>
+<f2>2.99406013544</f2>
+</Summary></Run>
+<Run id = '2'>
+<Summary>
+<NumEvals>3680</NumEvals>
+<RunTime>1.12973690033</RunTime>
+<IBD>0.880290416048</IBD>
+<IBS>0.0636762361267</IBS>
+<f1>0.0111261695224</f1>
+<f2>2.99568241887</f2>
+</Summary></Run>
+<Run id = '3'>
+<Summary>
+<NumEvals>1656</NumEvals>
+<RunTime>0.553297996521</RunTime>
+<IBD>0.872453534387</IBD>
+<IBS>0.0255336934217</IBS>
+<f1>0.368432023167</f1>
+<f2>2.55690733004</f2>
+</Summary></Run>
+</Algorithm>
+<Algorithm name = 'GALE4'>
+<Run id = '1'>
+<Summary>
+<NumEvals>124</NumEvals>
+<RunTime>6.02488303185</RunTime>
+<IBD>0.891421933195</IBD>
+<IBS>0.00460236757366</IBS>
+<f1>0.137520308088</f1>
+<f2>4.59576688031</f2>
+</Summary></Run>
+<Run id = '2'>
+<Summary>
+<NumEvals>121</NumEvals>
+<RunTime>5.83501696587</RunTime>
+<IBD>0.887846702084</IBD>
+<IBS>0.00102728850985</IBS>
+<f1>0.0172497108254</f1>
+<f2>4.91471823652</f2>
+</Summary></Run>
+<Run id = '3'>
+<Summary>
+<NumEvals>128</NumEvals>
+<RunTime>6.00349020958</RunTime>
+<IBD>1.03784833315</IBD>
+<IBS>0.0107333483693</IBS>
+<f1>0.750450203672</f1>
+<f2>3.61478255101</f2>
+</Summary></Run>
+</Algorithm>
+</Problem>
+</Experiment>

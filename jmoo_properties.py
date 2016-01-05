@@ -50,14 +50,14 @@ from Problems.XOMO.XOMO_osp2 import XOMO_osp2
 # JMOO Experimental Definitions
 algorithms = [
     # jmoo_GALE2(),
-    # jmoo_GALE(),
-              jmoo_DE(),
+    jmoo_GALE(),
+              # jmoo_DE(),
     # jmoo_MOEAD_TCH(),
     # jmoo_NSGAIII(),
     # jmoo_GALE_no_mutation(),
-    # jmoo_NSGAII(),
+    jmoo_NSGAII(),
     # jmoo_SPEA2(),
-    #   jmoo_GALE4(),
+      jmoo_GALE4(),
               # jmoo_DE(),
               # jmoo_MOEAD_TCH(),
               # jmoo_NSGAIII(),
@@ -66,7 +66,7 @@ algorithms = [
 
 problems =[
     # fonseca(3),
-    #     zdt1(),
+        zdt1(),
     #  zdt4(),
     #  zdt3(),
     # golinski(), zdt6()
@@ -97,7 +97,7 @@ problems =[
     # dtlz4(24, 15)
     # XOMO_all(),
     # NRP(50, 5, 5, 20, 120)
-    FeatureTreeModel("Web_Portal", valid_solutions=True),
+    # FeatureTreeModel("Web_Portal", valid_solutions=True),
     # FeatureTreeModel("eshop", valid_solutions=True),
     # FeatureTreeModel("cellphone", valid_solutions=True),
     # FeatureTreeModel("EIS", valid_solutions=True),

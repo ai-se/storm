@@ -1,0 +1,36 @@
+<Experiment>
+<Problem name = 'Web_Portal'>
+<Algorithm name = 'DE'>
+<Run id = '1'>
+<Summary>
+<NumEvals>1840</NumEvals>
+<RunTime>0.835893154144</RunTime>
+<IBD>0.862030339304</IBD>
+<IBS>0.0178996228618</IBS>
+<number_of_features>20</number_of_features>
+<constrained_violated>0</constrained_violated>
+<cost>6.59912643074</cost>
+</Summary></Run>
+<Run id = '2'>
+<Summary>
+<NumEvals>1840</NumEvals>
+<RunTime>0.846119165421</RunTime>
+<IBD>0.868263893676</IBD>
+<IBS>0.0146328229869</IBS>
+<number_of_features>15</number_of_features>
+<constrained_violated>0</constrained_violated>
+<cost>8.6343952834</cost>
+</Summary></Run>
+<Run id = '3'>
+<Summary>
+<NumEvals>1840</NumEvals>
+<RunTime>0.839635848999</RunTime>
+<IBD>0.868334544551</IBD>
+<IBS>0.0136403920795</IBS>
+<number_of_features>15</number_of_features>
+<constrained_violated>0</constrained_violated>
+<cost>8.6343952834</cost>
+</Summary></Run>
+</Algorithm>
+</Problem>
+</Experiment>
