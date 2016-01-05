@@ -1,7 +1,4 @@
-# These are the constrained models which were introduced in "An Evolutionary Many-Objective Optimization
-Algorithm Using Reference-Point Based
-Nondominated Sorting Approach, Part II: Handling
-Constraints and Extending to an Adaptive Approach"
+# These are the constrained models which were introduced in "An Evolutionary Many-Objective Optimization Algorithm Using Reference-Point Based Nondominated Sorting Approach, Part II: HandlingConstraints and Extending to an Adaptive Approach"
 
 # Type1: Type-1 constrained problems, the original Pareto-optimal
 front is still optimal, but there is an infeasible barrier in approaching
