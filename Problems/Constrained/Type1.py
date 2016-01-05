@@ -1,7 +1,7 @@
 from jmoo_problem import *
 from jmoo_objective import *
 from jmoo_decision import *
-from math import pi, cos
+from math import pi, cos, sin
 
 class c1_dtlz1(jmoo_problem):
     "Constrained DTLZ1"

@@ -76,7 +76,8 @@ class c2_convex_dtlz2(jmoo_problem):
         if input:
             for i,decision in enumerate(prob.decisions):
                 decision.value = input[i]
-        k = len(prob.decisions) - len(prob.objectives) + 1
+        k = 10
+        assert(len(prob.decisions) == len(prob.objectives) + 9), "Something is wrong"
         g = 0.0
 
         x = []
@@ -112,6 +113,6 @@ class c2_convex_dtlz2(jmoo_problem):
         objectives = prob.evaluate(input)
         radius = {"3": 0.225, "5": 0.225, "8": 0.26, "10": 0.26, "15": 0.27}
         lambda_value = sum(objectives) * (len(objectives) ** -1)
-        constraint_value = sum([(objective - lambda_value)**2 - r**2 for objective in objectives])
+        constraint_value = sum([(objective - lambda_value)**2 - radius[str(len(objectives))]**2 for objective in objectives])
         return False if constraint_value >= 0 else True
 

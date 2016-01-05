@@ -44,7 +44,9 @@ from Problems.XOMO.XOMO_all import XOMO_all
 from Problems.XOMO.XOMO_ground import XOMO_ground
 from Problems.XOMO.XOMO_osp import XOMO_osp
 from Problems.XOMO.XOMO_osp2 import XOMO_osp2
-
+from Problems.Constrained.Type1 import c1_dtlz1,c1_dtlz3
+from Problems.Constrained.Type2 import c2_dtlz2, c2_convex_dtlz2
+from Problems.Constrained.Type3 import c3_dtlz1, c3_dtlz4
 
 
 # JMOO Experimental Definitions
@@ -55,9 +57,9 @@ algorithms = [
     # jmoo_MOEAD_TCH(),
     # jmoo_NSGAIII(),
     # jmoo_GALE_no_mutation(),
-    jmoo_NSGAII(),
+    # jmoo_NSGAII(),
     # jmoo_SPEA2(),
-      jmoo_GALE4(),
+    #   jmoo_GALE4(),
               # jmoo_DE(),
               # jmoo_MOEAD_TCH(),
               # jmoo_NSGAIII(),
@@ -65,8 +67,46 @@ algorithms = [
               ]
 
 problems =[
+    # c1_dtlz1(7, 3),
+    # c1_dtlz1(9, 5),
+    # c1_dtlz1(12, 8),
+    # c1_dtlz1(14, 10),
+    # c1_dtlz1(19, 15),
+
+    # c1_dtlz3(12, 3),
+    # c1_dtlz3(14, 5),
+    # c1_dtlz3(17, 8),
+    # c1_dtlz3(19, 10),
+    # c1_dtlz3(24, 15),
+
+
+    # c2_dtlz2(12, 3),
+    # c2_dtlz2(14, 5),
+    # c2_dtlz2(17, 8),
+    # c2_dtlz2(19, 10),
+    # c2_dtlz2(24, 15),
+    #
+    # c2_convex_dtlz2(12, 3),
+    # c2_convex_dtlz2(14, 5),
+    # c2_convex_dtlz2(17, 8),
+    # c2_convex_dtlz2(19, 10),
+    # c2_convex_dtlz2(24, 15),
+
+
+    c3_dtlz1(7, 3),
+    c3_dtlz1(9, 5),
+    c3_dtlz1(12, 8),
+    c3_dtlz1(14, 10),
+    c3_dtlz1(19, 15),
+
+    c3_dtlz4(7, 3),
+    c3_dtlz4(9, 5),
+    c3_dtlz4(12, 8),
+    c3_dtlz4(14, 10),
+    c3_dtlz4(19, 15),
+
     # fonseca(3),
-        zdt1(),
+    # zdt1(),
     #  zdt4(),
     #  zdt3(),
     # golinski(), zdt6()
