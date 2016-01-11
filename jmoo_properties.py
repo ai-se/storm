@@ -103,7 +103,7 @@ problems =[
     # c3_dtlz4(9, 5),
     # c3_dtlz4(12, 8),
     # c3_dtlz4(14, 10),
-    # c3_dtlz4(19, 15),
+    c3_dtlz4(19, 15),
 
     dtlz7(24, 5)
 
