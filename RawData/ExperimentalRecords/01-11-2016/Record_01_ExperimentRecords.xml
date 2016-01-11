@@ -1,0 +1,42 @@
+<Experiment>
+<Problem name = 'DTLZ7'>
+<Algorithm name = 'DE'>
+<Run id = '1'>
+<Summary>
+<NumEvals>1840</NumEvals>
+<RunTime>0.335716962814</RunTime>
+<IBD>0.83745294287</IBD>
+<IBS>0.00928233733068</IBS>
+<f1>0.0</f1>
+<f2>0.0</f2>
+<f3>0.0661931006676</f3>
+<f4>0.0</f4>
+<f5>17.7243202556</f5>
+</Summary></Run>
+<Run id = '2'>
+<Summary>
+<NumEvals>1840</NumEvals>
+<RunTime>0.356568098068</RunTime>
+<IBD>0.847530888494</IBD>
+<IBS>0.0137470272734</IBS>
+<f1>0.0</f1>
+<f2>0.0</f2>
+<f3>0.0</f3>
+<f4>0.0</f4>
+<f5>14.9697684297</f5>
+</Summary></Run>
+<Run id = '3'>
+<Summary>
+<NumEvals>1840</NumEvals>
+<RunTime>0.395653009415</RunTime>
+<IBD>0.857517289868</IBD>
+<IBS>0.0136475200703</IBS>
+<f1>0.0</f1>
+<f2>0.0</f2>
+<f3>0.0</f3>
+<f4>0.0383485707307</f4>
+<f5>16.9524997231</f5>
+</Summary></Run>
+</Algorithm>
+</Problem>
+</Experiment>
