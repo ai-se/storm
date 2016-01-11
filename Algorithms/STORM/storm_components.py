@@ -1,17 +1,11 @@
 from jmoo_stats_box import *
-import os, inspect, sys
-
 
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-import jmoo_properties
 from STORM.Helper.mutator import extrapolate
-from STORM.Helper.geometry import find_central_point
-from STORM.Helper.poles import find_poles, look_for_duplicates, find_poles3, find_poles2
-from STORM.Helper.better import rearrange
-from STORM.Helper.scores import scores
+from STORM.Helper.poles import look_for_duplicates, find_poles3, find_poles2
 from STORM.Helper.nudge import nudge
 
 from STORM.Helper.scores import scores2

@@ -30,7 +30,7 @@
 import math
 import jmoo_algorithms
 from jmoo_individual import *
-import jmoo_properties
+# import jmoo_properties
 from utility import *
 IGDMEASURE = False
 import os, inspect, sys

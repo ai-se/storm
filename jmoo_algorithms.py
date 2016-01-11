@@ -29,14 +29,6 @@
 from Algorithms.DEAP import base
 from Algorithms.DEAP import creator
 from Algorithms.DEAP import tools
-from Algorithms.DEAP.tools.emo import *
-
-
-import os, sys, inspect
-
-def do_nothing_initializer(problem, population):
-    return population, 0
-
 
 from Algorithms.GALE.gale_components import *
 from Algorithms.DE.de_components import *
@@ -48,15 +40,21 @@ from Algorithms.GALE0.gale_components import *
 from Algorithms.GALE_no_mutation.gale_components import *
 from Algorithms.GALE2.gale_components import *
 from Algorithms.GALE4.gale_components import *
+from Algorithms.DEAP.tools.emo import *
 
 from jmoo_individual import *
 
-
-
-from jmoo_properties import *
 from utility import *
 import jmoo_stats_box
 import array,random,numpy
+
+import os, sys, inspect
+
+def do_nothing_initializer(problem, population):
+    return population, 0
+
+
+
 
 
 #############################################################

@@ -1,20 +1,18 @@
 from __future__ import division
+
 import bisect
+import inspect
 import math
+import os
 import random
+import sys
+from collections import defaultdict
 from itertools import chain
 from operator import attrgetter, itemgetter
-from collections import defaultdict
-import os
-import sys
-import inspect
 
-import os, sys, inspect
 cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe()))[0], "../../..")))
 if cmd_subfolder not in sys.path:
     sys.path.insert(0, cmd_subfolder)
-from jmoo_individual import *
-import jmoo_properties
 
 
 ######################################

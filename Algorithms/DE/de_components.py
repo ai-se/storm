@@ -1,12 +1,6 @@
-import os
-import sys
-import inspect
-import random
-
-from jmoo_individual import *
 from jmoo_algorithms import *
 from jmoo_stats_box import *
-import jmoo_properties
+# import jmoo_properties
 
 
 def three_others(individuals, one):

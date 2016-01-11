@@ -51,19 +51,19 @@ from Problems.Constrained.Type3 import c3_dtlz1, c3_dtlz4
 
 # JMOO Experimental Definitions
 algorithms = [
-    # jmoo_GALE2(),
-    jmoo_GALE(),
-              # jmoo_DE(),
-    # jmoo_MOEAD_TCH(),
-    # jmoo_NSGAIII(),
-    # jmoo_GALE_no_mutation(),
-    # jmoo_NSGAII(),
-    # jmoo_SPEA2(),
-    #   jmoo_GALE4(),
-              # jmoo_DE(),
-              # jmoo_MOEAD_TCH(),
-              # jmoo_NSGAIII(),
-    # jmoo_STORM()
+                # jmoo_GALE2(),
+                # jmoo_GALE(),
+                jmoo_DE(),
+                # jmoo_MOEAD_TCH(),
+                # jmoo_NSGAIII(),
+                # jmoo_GALE_no_mutation(),
+                # jmoo_NSGAII(),
+                # jmoo_SPEA2(),
+                # jmoo_GALE4(),
+                # jmoo_DE(),
+                # jmoo_MOEAD_TCH(),
+                # jmoo_NSGAIII(),
+                # jmoo_STORM()
               ]
 
 problems =[
@@ -93,17 +93,19 @@ problems =[
     # c2_convex_dtlz2(24, 15),
 
 
-    c3_dtlz1(7, 3),
-    c3_dtlz1(9, 5),
-    c3_dtlz1(12, 8),
-    c3_dtlz1(14, 10),
-    c3_dtlz1(19, 15),
+    # c3_dtlz1(7, 3),
+    # c3_dtlz1(9, 5),
+    # c3_dtlz1(12, 8),
+    # c3_dtlz1(14, 10),
+    # c3_dtlz1(19, 15),
+    #
+    # c3_dtlz4(7, 3),
+    # c3_dtlz4(9, 5),
+    # c3_dtlz4(12, 8),
+    # c3_dtlz4(14, 10),
+    # c3_dtlz4(19, 15),
 
-    c3_dtlz4(7, 3),
-    c3_dtlz4(9, 5),
-    c3_dtlz4(12, 8),
-    c3_dtlz4(14, 10),
-    c3_dtlz4(19, 15),
+    dtlz7(24, 5)
 
     # fonseca(3),
     # zdt1(),
