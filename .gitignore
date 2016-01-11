@@ -67,7 +67,8 @@ target/
 .DS_Store
 
 #JMOO
-./RawData/*
+./RawData/ExperimentalRecords/
+./RawData/PopulationArchives
 
 
 
