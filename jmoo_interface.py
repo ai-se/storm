@@ -45,8 +45,7 @@ The Main Interface of JMOO.  Run this python script from the commmand line with 
 """
    
 
-db = open('what.txt', 'w')
-                                
+
 
 # Process command line arguments.  These modify properties of JMOO.
 tag = ""
@@ -61,6 +60,7 @@ for i,arg in enumerate(sys.argv):
         build_new_pop = True
     if arg == "-MU" or arg == "-mu" or arg == "-Mu":
         MU = sys.argv[i+1]
+        Configurations["Universal"]["Population_Size"] = int(MU)
     if arg == "-tag" or arg == "-Tag" or arg == "-TAG":
         tag = sys.argv[i+1]
     if arg == "-reportOnly":
@@ -76,7 +76,9 @@ for i,arg in enumerate(sys.argv):
 # Build new initial populations if suggested.  Before tests can be performed, a problem requires an initial dataset.
 if build_new_pop:
     for problem in problems:
+        # for_landscape(problem, Configurations["Universal"]["Population_Size"])
         initialPopulation(problem, Configurations["Universal"]["Population_Size"])
+    exit()
 
 
 # Wrap the tests in the jmoo core framework

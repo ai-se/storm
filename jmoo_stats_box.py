@@ -30,7 +30,7 @@
 import math
 import jmoo_algorithms
 from jmoo_individual import *
-# import jmoo_properties
+import jmoo_properties
 from utility import *
 IGDMEASURE = False
 import os, inspect, sys
@@ -85,7 +85,7 @@ class jmoo_stats_box:
         "add a stat box - compute the statistics first"
 
         # Find a file name to write the stats to
-        if (statBox.alg.name == "GALE0" or statBox.alg.name == "GALE_no_mutation") and population_size is not None:
+        if (statBox.alg.name == "SWAY5" or statBox.alg.name == "SWAY2") and population_size is not None:
             filename = "Data/results_"+statBox.problem.name + "-p" + str(population_size) + "-d" + \
                    str(len(statBox.problem.decisions)) + "-o" + str(len(statBox.problem.objectives))+\
                    "_"+statBox.alg.name+".datatable"
@@ -100,7 +100,7 @@ class jmoo_stats_box:
         statBox.numEval += num_new_evals
 
         # population represents on the individuals which have been evaluated
-        shorten_population = [pop for pop in population if pop.fitness.valid]
+        shorten_population = [pop for pop in population if pop.valid]
         objectives = [individual.fitness.fitness for individual in shorten_population]
         # Split Columns into Lists
         objective_columns = [[objective[i] for objective in objectives] for i, obj in enumerate(statBox.problem.objectives)]
@@ -108,11 +108,12 @@ class jmoo_stats_box:
         objective_medians = [median(fitCol) for fitCol in objective_columns]
         # Calculate IQR of objective scores
         objective_iqr = [spread(fitCol) for fitCol in objective_columns]
-        
+
+
         # Initialize Reference Point on Initial Run
         if initial is True:
-            statBox.referencePoint = [o.med for o in statBox.problem.objectives]
-            statBox.reference_point_for_hypervolume = [o.up for o in statBox.problem.objectives]
+            statBox.referencePoint = [150 for o in statBox.problem.objectives]
+            statBox.reference_point_for_hypervolume = [150 for o in statBox.problem.objectives]
 
 
         # Calculate IBD & IBS

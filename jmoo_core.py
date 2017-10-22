@@ -31,12 +31,15 @@ Random Stuff
 """
 
 import random
-from Graphics.charter import charter_reporter, statistic_reporter, comparision_reporter
-from Graphics.summary import generate_summary
+# from Graphics.simplified import draw_hv, draw_igd, draw_spread, draw_gd
+from Graphics.simplified_new import get_performance_measures
 from jmoo_jmoea import jmoo_evo
 from jmoo_properties import DECISION_BIN_TABLE, DATA_SUFFIX, DATA_PREFIX, DEFECT_PREDICT_PREFIX, SUMMARY_RESULTS, \
     RRS_TABLE
 from jmoo_stats_box import percentChange
+
+import multiprocessing as mp
+import os
 
 any = random.uniform
 normal = random.gauss
@@ -119,13 +122,17 @@ class jmoo_chart_report:
         self.Configurations = Configurations
 
     def doit(self, tagnote=""):
-        generate_final_frontier_for_gale4(self.tests.problems, self.tests.algorithms, self.Configurations, tag=tagnote)
-        hv_spread =[]
+        igd_list = []
         for problem in self.tests.problems:
-            hv_spread.append(charter_reporter([problem], self.tests.algorithms, self.Configurations, tag=tagnote))
-        statistic_reporter(self.tests.problems, self.tests.algorithms, self.Configurations, tag=tagnote)
-        comparision_reporter(self.tests.problems, self.tests.algorithms, [hvp[0] for hvp in hv_spread], [hvp[1] for hvp in hv_spread], "GALE")
-        generate_summary(self.tests.problems, self.tests.algorithms, "GALE", self.Configurations)
+            get_performance_measures(problem, self.Configurations['Universal']['Population_Size'])
+            # print "HyperVolume", problem.name + " Population " + str(self.Configurations['Universal']['Population_Size']),
+            # draw_hv([problem], self.tests.algorithms, self.Configurations, tag="HV")
+            # print "Spread", problem.name + " Population " + str(self.Configurations['Universal']['Population_Size']),
+            # draw_spread([problem], self.tests.algorithms, self.Configurations, tag="SPR")
+            # print "IGD"
+            # draw_igd([problem], self.tests.algorithms, self.Configurations, tag="IGD")
+            # print "GD"
+            # draw_gd([problem], self.tests.algorithms, self.Configurations, tag="GD")
 
 
 def generate_final_frontier_for_gale4(problems, algorithms, Configurations, tag=""):
@@ -196,6 +203,27 @@ class jmoo_test:
         return str(self.problems) + str(self.algorithms)
 
 
+def call_jmoo_evo(problem, algorithm, configurations, repeat):
+    import os
+    print "Working in Process #%d" % (os.getpid())
+    foldername = "./RawData/PopulationArchives/" + algorithm.name + "_" + problem.name \
+                 + "_" + str(configurations["Universal"]["Population_Size"]) + "/" + str(repeat)
+    import os
+    if not os.path.exists(foldername):
+        print foldername
+        os.makedirs(foldername)
+
+    statBox = jmoo_evo(problem, algorithm, configurations, repeat=repeat)
+    eval_filename = "./RawData/ExperimentalRecords/" + algorithm.name + "_" + problem.name \
+                    + "_" + str(configurations["Universal"]["Population_Size"]) + "_" + str(
+        repeat) + ".txt"
+
+    f = open(eval_filename, "w")
+    f.write(str(statBox.numEval + configurations["Universal"]["Population_Size"]))
+    f.close()
+    return eval_filename
+
+
 class JMOO:
     def __init__(self, tests, reports, configurations):
         self.tests = tests
@@ -203,153 +231,24 @@ class JMOO:
         self.configurations = configurations
 
     def doTests(self):
+        results = []
 
-        sc2 = open(DATA_PREFIX + SUMMARY_RESULTS + DATA_SUFFIX, 'w')
+
 
         # Main control loop
-        representatives = []                        # List of resulting final generations (stat boxe datatype)
-        record_string = "<Experiment>\n"
+        pool = mp.Pool()
         for problem in self.tests.problems:
-              
-            record_string += "<Problem name = '" + problem.name + "'>\n"
-            
             for algorithm in self.tests.algorithms:
-                
-                
-                record_string += "<Algorithm name = '" + algorithm.name + "'>\n"
-                
-                print "#<------- " + problem.name + " + " + algorithm.name + " ------->#"
-
-                # Initialize Data file for recording summary information [for just this problem + algorithm]
-                backend = problem.name + "_" + algorithm.name + ".txt"
-
-                # Decision Data
-                filename = problem.name + "-p" + str(self.configurations["Universal"]["Population_Size"]) + "-d" + str(
-                    len(problem.decisions)) + "-o" + str(len(problem.objectives)) + "_" + algorithm.name + DATA_SUFFIX
-                dbt = open(DATA_PREFIX + DECISION_BIN_TABLE + "_" + filename, 'w')
-                sr = open(DATA_PREFIX + SUMMARY_RESULTS + filename, 'w')
-                rrs = open(DATA_PREFIX + RRS_TABLE + "_" + filename, 'w')
-
-                # Results Record:
-                # # # Every generation
-                # # # Decisions + Objectives
-
-                # Summary Record
-                # - Best Generation Only
-                # - Number of Evaluations + Aggregated Objective Score
-                # - 
-
-
-                fa = open("Data/results_" + filename, 'w')
-                strings = ["NumEval"] \
-                          + [obj.name + "_median,(%chg),"
-                             + obj.name + "_spread" for obj in problem.objectives] \
-                          + ["IBD,(%chg), IBS"] + ["IGD,(%chg)"]
-                for s in strings: fa.write(s + ",")
-                fa.write("\n")
-                fa.close()
-
-                IGD_Values = []
-                # Repeat Core
                 for repeat in range(self.configurations["Universal"]["Repeats"]):
+                    # call_jmoo_evo(problem, algorithm, self.configurations, repeat)
+                    print problem.name, algorithm.name, repeat
+                    pool.apply_async(call_jmoo_evo, (problem, algorithm, self.configurations, repeat))
 
-                    foldername = "./RawData/PopulationArchives/" + algorithm.name + "_" + problem.name + "/" + str(repeat)
-                    import os
-                    if not os.path.exists(foldername):
-                        os.makedirs(foldername)
-                    # Run
-                    record_string += "<Run id = '" + str(repeat+1) + "'>\n"
-
-                    start = time.time()
-                    statBox = jmoo_evo(problem, algorithm, self.configurations)
-                    end = time.time()
-
-                    # Find best generation
-                    representative = statBox.box[0]
-                    for r, rep in enumerate(statBox.box):
-                        # for indi in rep.population:
-                        #     print indi
-                        if rep.IBD < representative.IBD:
-                            representative = statBox.box[r]
-                    representatives.append(representative)
-
-                    # Decision Bin Data
-                    s = ""
-                    for row in representative.population:
-                        for dec in row.decisionValues:
-                            s += str("%10.2f" % dec) + ","
-                        if row.valid:
-                            for obj in row.fitness.fitness:
-                                s += str("%10.2f" % obj) + ","
-                        else:
-                            for obj in problem.objectives:
-                                s += "?" + ","
-
-                        s += str(representative.numEval) + ","
-                        s += "\n"
-
-                    dbt.write(s)
-
-                    baseline = problem.referencePoint
-                    s = ""
-                    for row in representative.population:
-                        # if not row.valid:
-                        #    row.evaluate()
-                        if row.valid:
-                            for o, base, obj in zip(row.fitness.fitness, baseline, problem.objectives):
-                                c = percentChange(o, base, obj.lismore, obj.low, obj.up)
-                                s += c + ","
-                            s += str(representative.numEval) + ","
-                            for o, base, obj in zip(row.fitness.fitness, baseline, problem.objectives):
-                                c = str("%12.2f" % o)
-                                s += c + ","
-                            s += "\n"
-                    rrs.write(s)
-
-                    # output every generation
-                    for box in [representative]:
-                        s_out = ""
-                        s_out += str(self.configurations["Universal"]["Population_Size"]) + ","
-                        s_out += problem.name + "-p" + str(
-                            self.configurations["Universal"]["Population_Size"]) + "-d" + str(
-                            len(problem.decisions)) + "-o" + str(len(problem.objectives)) + ","
-                        s_out += algorithm.name + ","
-                        s_out += str(box.numEval) + ","
-                        for low in representative.fitnessMedians:
-                            s_out += str("%10.2f" % low) + ","
-                        s_out += str("%10.2f" % box.IBD) + "," + str("%10.2f" % box.IBS) + "," + str((end - start))
-                        sr.write(s_out + "\n")
-                        sc2.write(s_out + "\n")
+        pool.close()
+        pool.join()
+        print(results)
 
 
-                    record_string += "<Summary>\n"
-                    record_string += "<NumEvals>" + str(representative.numEval) + "</NumEvals>\n"
-                    record_string += "<RunTime>" + str((end-start)) + "</RunTime>\n"
-                    record_string += "<IBD>" + str(box.IBD) + "</IBD>\n"
-                    record_string += "<IBS>" + str(box.IBS) + "</IBS>\n"
-                    for i in range(len(problem.objectives)):
-                        record_string += "<" + problem.objectives[i].name + ">" + str(representative.fitnessMedians[i]) + "</" + problem.objectives[i].name + ">\n"
-                    record_string += "</Summary>"
-                        
-                        
-                    
-                    
-                    # Finish
-                    record_string += "</Run>\n"
-                    print " # Finished: Celebrate! # " + " Time taken: " + str("%10.5f" % (end-start)) + " seconds."
-                    
-                record_string += "</Algorithm>\n"
-            record_string += "</Problem>\n"
-        record_string += "</Experiment>\n"
-
-        from time import strftime
-        date_folder_prefix = strftime("%m-%d-%Y")
-        if not os.path.isdir('./RawData/ExperimentalRecords/' + date_folder_prefix):
-            os.makedirs('./RawData/ExperimentalRecords/' + date_folder_prefix)
-        record_number = len([name for name in os.listdir('./RawData/ExperimentalRecords/' + date_folder_prefix)]) + 1
-        filename = './RawData/ExperimentalRecords/' + date_folder_prefix + '/Record' + "_" + str("%02d" % record_number) + "_" + 'ExperimentRecords.xml'
-        zOutFile = open(filename, 'w')
-        zOutFile.write(record_string)
                     
                     
                     

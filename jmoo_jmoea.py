@@ -30,7 +30,6 @@
 from jmoo_algorithms import *
 from jmoo_stats_box import *
 from jmoo_properties import *
-from Algorithms.GALE.Fastmap.Moo import *
 # from pylab import *
 import jmoo_properties
 
@@ -55,7 +54,7 @@ def read_file(problem, filename):
 
 def store_values(latestdir, generation_number, population):
     filename = latestdir + "/" + str(generation_number) + ".txt"
-    shorten_population = [pop for pop in population if pop.fitness.valid]
+    shorten_population = [pop for pop in population if pop.valid]
     try:
         values = [", ".join(map(str, pop.decisionValues + pop.fitness.fitness)) for pop in shorten_population]
     except:
@@ -66,29 +65,19 @@ def store_values(latestdir, generation_number, population):
     f.close()
 
 
-def store_values_g4(latestdir, generation_number, population):
+def store_values_g4(problem, latestdir, generation_number, population):
+
     filename = latestdir + "/" + str(generation_number) + ".txt"
-    shorten_population = [pop for pop in population if pop.fitness.valid]
-    number_of_objectives = len(shorten_population[0].fitness.fitness)
-    try:
-        values = [", ".join(map(str, pop.decisionValues + pop.fitness.fitness)) for pop in shorten_population]
-    except:
-        import pdb
-        pdb.set_trace()
+    values = []
+    for pop in population:
+        values.append(", ".join(map(str, pop.decisionValues + problem.evaluate(pop.decisionValues))))
 
-    try:
-        values.extend([", ".join(map(str, pop.decisionValues)) + "," +
-                                 ",".join(map(str, ["X" for _ in xrange(number_of_objectives)]))
-                       for pop in [pop for pop in population if pop.fitness.valid is False]])
-    except:
-        import pdb
-        pdb.set_trace()
     f = open(filename, 'w')
     for value in values: f.write("%s\n" % value)
     f.close()
 
 
-def jmoo_evo(problem, algorithm, configurations, toStop = bstop):
+def jmoo_evo(problem, algorithm, configurations, repeat, stopCriteria=bstop):
     """
     ----------------------------------------------------------------------------
      Inputs:
@@ -113,15 +102,6 @@ def jmoo_evo(problem, algorithm, configurations, toStop = bstop):
     gen              = 0                                 # Just a number to track generations
     numeval = 0
     values_to_be_passed = {}
-    
-    # # # # # # # # # # # # # # # #
-    # 2) Load Initial Population  #
-    # # # # # # # # # # # # # # # #
-    # Though this is not important I am sticking to NSGA3 paper
-    # if algorithm.name == "NSGA3":
-    #     print "-"*20 + "boom"
-    #     jmoo_properties.PSI = jmoo_properties.max_generation[problem.name]
-    #     jmoo_properties.MU = population_size[problem.name.split("_")[-1]]
 
     population = problem.loadInitialPopulation(configurations["Universal"]["Population_Size"])
 
@@ -138,10 +118,10 @@ def jmoo_evo(problem, algorithm, configurations, toStop = bstop):
 
 
     # Generate a folder to store the population
-    foldername = "./RawData/PopulationArchives/" + algorithm.name + "_" + problem.name + "/"
+    foldername = "./RawData/PopulationArchives/" + algorithm.name + "_" + problem.name + "_" + str(configurations["Universal"]["Population_Size"]) + "/"
     import os
     all_subdirs = [foldername + d for d in os.listdir(foldername) if os.path.isdir(foldername + d)]
-    latest_subdir = sorted(all_subdirs, key=os.path.getmtime)[-1]
+    latest_subdir = foldername + str(repeat)
 
 
     # # # # # # # # # # # # # # #
@@ -192,30 +172,23 @@ def jmoo_evo(problem, algorithm, configurations, toStop = bstop):
         if algorithm.name == "GALE0" or algorithm.name == "GALE_no_mutation":
             statBox.update(selectees, gen, numNewEvals, population_size=Configurations["Universal"]["Population_Size"])
             store_values(latest_subdir, gen, selectees)
-        elif algorithm.name == "GALE4":
+        elif algorithm.name == "SWAY5":
             statBox.update(selectees, gen, len(selectees), population_size=Configurations["Universal"]["Population_Size"])
-            store_values_g4(latest_subdir, gen, selectees)
+            store_values_g4(problem, latest_subdir, gen, selectees)
         else:
             statBox.update(population, gen, numNewEvals)
             store_values(latest_subdir, gen, population)
 
-        # from PerformanceMetrics.IGD.IGD_Calculation import IGD
-        # resulting_pf = [[float(f) for f in individual.fitness.fitness] for individual in statBox.box[-1].population]
-        # fitnesses = statBox.box[-1].fitnesses
-        # median_fitness = []
-        # for i in xrange(len(problem.objectives)):
-        #     temp_fitness = [fit[i] for fit in fitnesses]
-        #     median_fitness.append(median(temp_fitness))
-        # print IGD(resulting_pf, readpf(problem)), median_fitness
-            
         # # # # # # # # # # # # # # # # # #
         # 4e) Evaluate Stopping Criteria  #
         # # # # # # # # # # # # # # # # # #
-        if algorithm.name != "GALE4":
-            stoppingCriteria = toStop(statBox)
-        # stoppingCriteria = False
+        # if algorithm.name != "SWAY5":
+        #     import pdb
+        #     pdb.set_trace()
+        #     stoppingCriteria = stopCriteria(statBox)
+        stoppingCriteria = False
 
-        # assert(len(statBox.box[-1].population) == configurations["Universal"]["Population_Size"]), \
-        #     "Length in the statBox should be equal to MU"
 
     return statBox
+
+

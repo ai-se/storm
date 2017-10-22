@@ -29,24 +29,8 @@
 from Algorithms.DEAP import base
 from Algorithms.DEAP import creator
 from Algorithms.DEAP import tools
-
-from Algorithms.GALE.gale_components import *
-from Algorithms.DE.de_components import *
-from Algorithms.MOEA_D.moead_components import *
-from Algorithms.NSGAIII.nsgaiii_components import *
-from Algorithms.STORM.storm_components import *
-from Algorithms.NSGAIII.nsgaiii_components import *
-from Algorithms.GALE0.gale_components import *
-from Algorithms.GALE_no_mutation.gale_components import *
-from Algorithms.GALE2.gale_components import *
-from Algorithms.GALE4.gale_components import *
 from Algorithms.DEAP.tools.emo import *
 
-from jmoo_individual import *
-
-from utility import *
-import jmoo_stats_box
-import array,random,numpy
 
 import os, sys, inspect
 
@@ -54,7 +38,30 @@ def do_nothing_initializer(problem, population):
     return population, 0
 
 
+# from Algorithms.GALE.gale_components import *
+# from Algorithms.DE.de_components import *
+from Algorithms.MOEA_D.moead_components import *
+# from Algorithms.NSGAIII.nsgaiii_components import *
+# from Algorithms.STORM.storm_components import *
+# from Algorithms.NSGAIII.nsgaiii_components import *
+from Algorithms.SWAY5.gale_components import *
+# from Algorithms.SWAY2.gale_components import *
+# from Algorithms.GALE2.gale_components import *
+# from Algorithms.GALE4.gale_components import *
+# from Algorithms.GALE8.gale_components import *
+# from Algorithms.GALE16.gale_components import *
+# from Algorithms.GALE32.gale_components import *
+# from Algorithms.GALE64.gale_components import *
+# from Algorithms.LearnerActive.LearnerActiveComponent import *
 
+from jmoo_individual import *
+
+
+
+from jmoo_properties import *
+from utility import *
+import jmoo_stats_box
+import array,random,numpy
 
 
 #############################################################
@@ -68,6 +75,16 @@ class jmoo_NSGAII:
         self.selector = selTournamentDCD
         self.adjustor = crossoverAndMutation
         self.recombiner = selNSGA2
+        self.color = color
+        self.type = '^'
+
+class jmoo_NSGAII_2:
+    def __init__(self, color="Green"):
+        self.name = "NSGAII_2"
+        self.initializer = None
+        self.selector = selTournamentDCD
+        self.adjustor = crossoverAndMutation
+        self.recombiner = selNSGA2_cheaper
         self.color = color
         self.type = '^'
 
@@ -94,9 +111,9 @@ class jmoo_GALE:
         self.type = '*'
 
 
-class jmoo_GALE0:
-    def __init__(self, color="Blue"):
-        self.name = "GALE0"
+class jmoo_SWAY5:
+    def __init__(self, color="Brown"):
+        self.name = "SWAY5"
         self.initializer = None
         self.selector = gale0WHERE
         self.adjustor = gale0Mutate
@@ -104,9 +121,9 @@ class jmoo_GALE0:
         self.color = color
         self.type = '*'
 
-class jmoo_GALE_no_mutation:
+class jmoo_SWAY2:
     def __init__(self, color="Orange"):
-        self.name = "GALE_no_mutation"
+        self.name = "SWAY2"
         self.initializer = None
         self.selector = gale_nm_WHERE
         self.adjustor = gale_nm_Mutate
@@ -114,36 +131,6 @@ class jmoo_GALE_no_mutation:
         self.color = color
         self.type = '*'
 
-class jmoo_GALE4:
-    def __init__(self, color="#0066ff"):
-        self.name = "GALE4"
-        self.initializer = None
-        self.selector = gale_4_WHERE
-        self.adjustor = gale_4_Mutate
-        self.recombiner = gale_4_Regen
-        self.color = color
-        self.type = '*'
-
-class jmoo_GALE2:
-    def __init__(self, color="Black"):
-        self.name = "GALE2"
-        self.initializer = None
-        self.selector = gale2WHERE
-        self.adjustor = gale2Mutate
-        self.recombiner = gale2Regen
-        self.color = color
-        self.type = '*'
-
-
-class jmoo_DE:
-    def __init__(self, color="magenta"):
-        self.name = "DE"
-        self.initializer = None
-        self.selector = de_selector
-        self.adjustor = de_mutate
-        self.recombiner = de_recombine  # stub
-        self.color = color
-        self.type = '*'
 
 
 class jmoo_MOEAD_TCH:
@@ -169,7 +156,7 @@ class jmoo_MOEAD_PBI:
 
 
 class jmoo_NSGAIII:
-    def __init__(self, color="green"):
+    def __init__(self, color="Black"):
         self.name = "NSGA3"
         self.initializer = None
         self.selector = nsgaiii_selector2
@@ -248,8 +235,10 @@ def selTournament(problem, individuals, configuration, value_to_be_passed):
     return [individuals[s] for s in selectedIndices], len(individuals)
 
 
-def selTournamentDCD(problem, individuals, configuration, value_to_be_passed):
+def selTournamentDCD(problem, population, configuration, value_to_be_passed):
 
+    from copy import deepcopy
+    individuals = deepcopy(population)
     # Evaluate any new guys
     for individual in individuals:
         if not individual.valid:
@@ -277,8 +266,10 @@ def selTournamentDCD(problem, individuals, configuration, value_to_be_passed):
 #############################################################
 
 
-def crossoverAndMutation(problem, individuals, configuration):
+def crossoverAndMutation(problem, population, configuration):
 
+    from copy import deepcopy
+    individuals = deepcopy(population)
     # Format a population data structure usable by DEAP's package
     dIndividuals = deap_format(problem, individuals)
 
@@ -337,7 +328,7 @@ def selSPEA2(problem, population, selectees, configurations):
             cells.append(dIndividual[j])
         population.append(jmoo_individual(problem, cells, [f for f in dIndividual.fitness.values]))
 
-    return population, k
+    return population, 0
 
 
 def selNSGA2(problem, population, selectees, configurations):
@@ -362,8 +353,16 @@ def selNSGA2(problem, population, selectees, configurations):
             cells.append(dIndividual[j])
         population.append(jmoo_individual(problem, cells, [f for f in dIndividual.fitness.values]))
 
-    return population, k
+    return population, 0
 
+
+def selNSGA2_cheaper(problem, population, selectees, configurations):
+    k = configurations["Universal"]["Population_Size"]
+    population.extend(selectees)
+    from Algorithms.FastmapNDS.fastmap_based_nds import do_fastmap_domination
+    new_population, k = do_fastmap_domination(problem, population, configurations)
+
+    return new_population, k
 
 #############################################################
 ### MOO Algorithm Convergence Stops
@@ -401,8 +400,35 @@ def deap_format(problem, individuals):
     for i, individual in enumerate(individuals):
         dIndividuals.append(creator.Individual([dv for dv in individual.decisionValues]))
         dIndividuals[-1].fitness.decisionValues = [dv for dv in individual.decisionValues]
-        if individual.valid: dIndividuals[i].fitness.values = individual.fitness.fitness
-        dIndividuals[-1].fitness.feasible = not problem.evalConstraints([dv for dv in individual.decisionValues])
+        if individual.valid:
+            dIndividuals[i].fitness.values = individual.fitness.fitness
+        dIndividuals[-1].fitness.feasible = True #not problem.evalConstraints([dv for dv in individual.decisionValues])
         dIndividuals[-1].fitness.problem = problem
 
     return dIndividuals
+
+
+def get_non_dominated_solutions(problem, population, configurations):
+    # NOTE: This might look wierd but this would return all the non dominated solutions
+    k = configurations["Universal"]["Population_Size"]
+    # Evaluate any new guys
+    for individual in population:
+        if not individual.valid:
+            individual.evaluate()
+
+    # Format a population Data structure usable by DEAP's package
+    dIndividuals = deap_format(problem, population)
+
+    # Combine
+    from Algorithms.DEAP.tools.emo import deap_selNSGA2
+    dIndividuals = deap_selNSGA2(dIndividuals, k)
+
+    # Copy from DEAP structure to JMOO structure
+    population = []
+    for i, dIndividual in enumerate(dIndividuals):
+        cells = []
+        for j in range(len(dIndividual)):
+            cells.append(dIndividual[j])
+        population.append(jmoo_individual(problem, cells, [f for f in dIndividual.fitness.values]))
+
+    return population

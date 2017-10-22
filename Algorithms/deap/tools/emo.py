@@ -1,18 +1,20 @@
 from __future__ import division
-
 import bisect
-import inspect
 import math
-import os
 import random
-import sys
-from collections import defaultdict
 from itertools import chain
 from operator import attrgetter, itemgetter
+from collections import defaultdict
+import os
+import sys
+import inspect
 
+import os, sys, inspect
 cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe()))[0], "../../..")))
 if cmd_subfolder not in sys.path:
     sys.path.insert(0, cmd_subfolder)
+from jmoo_individual import *
+import jmoo_properties
 
 
 ######################################
@@ -76,20 +78,18 @@ def sortNondominated(individuals, k, first_front_only=False):
         return []
 
     map_fit_ind = defaultdict(list)
-
     for ind in individuals:
         map_fit_ind[ind.fitness].append(ind)
     fits = map_fit_ind.keys()
+
     current_front = []
     next_front = []
     dominating_fits = defaultdict(int)
     dominated_fits = defaultdict(list)
 
     # Rank first Pareto front
-    # some of the elements are repeated
-    # Non dominated solutions
     for i, fit_i in enumerate(fits):
-        for fit_j in fits:
+        for fit_j in fits[i + 1:]:
             if fit_i.dominates(fit_j):
                 dominating_fits[fit_j] += 1
                 dominated_fits[fit_i].append(fit_j)

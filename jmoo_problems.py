@@ -28,22 +28,73 @@
 "Implementation of a variety of Multi-Objective Problems"
 
 from math import *
-
+import sys
 from jmoo_objective import *
 from jmoo_decision import *
 from jmoo_problem import *
 from jmoo_stats_box import *
+from Techniques.NoveltySearch import NoveltySearch
+from Techniques.euclidean_distance import euclidean_distance
 
 
 def distance(in1, in2):
     return sum([abs(x-y) for x,y in zip(in1,in2)])**0.5
 
-def initialPopulation(problem, n, path=""):
+
+def find_opposing_population(problem, dataset):
+    def find_opposite(point, center):
+        assert(len(point) == len(center)), "Something is wrong"
+        new_point = [0 for _ in xrange(len(point))]
+        for i in xrange(len(new_point)):
+            new_point[i] = center[i] + (center[i] - point[i])
+
+        if problem.validate(new_point) is False: exit()
+        return new_point
+
+    def find_center(problem):
+        center = [0 for _ in xrange(len(problem.decisions))]
+        for i, decision in enumerate(problem.decisions):
+            center[i] = decision.low + (decision.up - decision.low)/2
+        return center
+
+    CP = []
+    center = find_center(problem)
+    from random import random
+    for data in dataset:
+        opposite = find_opposite(data, center)
+        assert(len(opposite) == len(data)), "Something is wrong"
+        temp = [0 for _ in xrange(len(opposite))]
+        for count, (i, j) in enumerate(zip(data, opposite)):
+            if i <= center[count]: temp[count] = i + (j - i) * random()
+            else: temp[count] = j + (i - j) * random()
+        CP.append(temp)
+    return CP
+
+
+def center_based_sampling(problem, dataset):
+    resulting_population = []
+    opposing_dataset = find_opposing_population(problem, dataset)
+    from random import shuffle
+    shuffle(opposing_dataset)
+    shuffle(dataset)
+    opposing_fraction = 0.7
+    resulting_population.extend(opposing_dataset[:int(len(dataset) * opposing_fraction)])
+    resulting_population.extend(dataset[:int(len(dataset) * (1-opposing_fraction))])
+    for i, pop in enumerate(resulting_population):
+        assert(problem.validate(pop) is True), "Something is wrong"
+    return resulting_population
+
+
+def for_landscape(problem, n, path=""):
     #generate dataset
     dataset = []
+    import sys
     for run in range(n):
-        dataset.append(problem.generateInput())
+        dataset.append(problem.generateInput(center=False))
+        print ". ",
+        sys.stdout.flush()
 
+    # dataset = center_based_sampling(problem, dataset)
 
     #write the dataset to file
     if path == "":
@@ -58,7 +109,74 @@ def initialPopulation(problem, n, path=""):
     h = problem.buildHeader() #the header row
     fo.write(h + "\n")
     for data in dataset: #each row of actual Data
-        fo.write(str(data).strip("[]") + "\n")
+        temp_data = data + problem.evaluate(data)
+        fo.write(str(temp_data).strip("[]") + "\n")
+        sys.stdout.flush()
+
+    # print "Dataset generated for " + problem.name + " in " + filename + "."
+
+
+    print "Dataset generated for " + problem.name + " in " + filename + "."
+    fo.close()
+
+
+def applyNoveltySearch(problem, n, path=""):
+
+    assert(0<=problem.percentage<1), "something is wrong"
+    # find theshold
+    lows = [decision.low for decision in problem.decisions]
+    highs = [decision.up for decision in problem.decisions]
+    normalize = [[low,high] for low, high in zip(lows, highs)]
+    maxvalue = len(problem.decisions)**0.5
+
+    k = 10
+    limit = 10000
+    threshold = problem.percentage * maxvalue
+
+    # create the object
+    NS = NoveltySearch(k, limit, threshold, normalize)
+
+    # generate random points and add them to archive
+    while NS.getArchiveSize() != n:
+        if NS.getArchiveSize() % 100 == 0: print ">> ", NS.getArchiveSize()
+        p = problem.generateInput()
+        temp = NS.addToArchive(p)
+        if  temp != 1: print '#',
+        else: print ".",
+        sys.stdout.flush()
+    return NS.getArchive()
+
+
+def initialPopulation(problem, n, path=""):
+    #generate dataset
+    dataset = []
+    import sys
+    for run in range(n):
+        dataset.append(problem.generateInput(center=False))
+        print ". ",
+        sys.stdout.flush()
+
+    # dataset = center_based_sampling(problem, dataset)
+    # dataset = applyNoveltySearch(problem, n)
+
+    #write the dataset to file
+    if path == "":
+        filename = "./Data/" + problem.name + "-p" + str(n) + "-d" + str(len(problem.decisions)) + "-o" + \
+                   str(len(problem.objectives))  + "-dataset.txt"
+    elif path == "unittesting":
+        filename = "../../Data/Testing-dataset.txt"
+    else:
+        print "No accounted for"
+        exit()
+
+    fo = open(filename, 'w')
+    h = problem.buildHeader() #the header row
+    fo.write(h + "\n")
+    for i, data in enumerate(dataset): #each row of actual Data
+        print problem.name, i
+        t = data + problem.evaluate(data)
+        t = ','.join(map(str, t))
+        fo.write(t + "\n")
     
     # print "Dataset generated for " + problem.name + " in " + filename + "."
     
@@ -291,8 +409,6 @@ class golinski(jmoo_problem):
 class zdt1(jmoo_problem):
     "ZDT1"
     def __init__(prob):
-
-        super(zdt1, prob).__init__()
         prob.name = "ZDT1"
         names = ["x" + str(i+1) for i in range(30)]
         prob.decisions = [jmoo_decision(names[i], 0, 1) for i in range(len(names))]
@@ -670,9 +786,8 @@ class osyczka2(jmoo_problem):
 
 class dtlz1(jmoo_problem):
     "DTLZ1"
-    def __init__(prob, numDecs=5, numObjs=2):
-
-        super(dtlz1, prob).__init__()
+    def __init__(prob, numDecs=5, numObjs=2, percentage=0):
+        prob.percentage = percentage
         prob.name = "DTLZ1_" + str(numDecs) + "_" + str(numObjs)
         names = ["x"+str(i+1) for i in range(numDecs)]
         lows =  [0.0 for i in range(numDecs)]
@@ -719,8 +834,8 @@ class dtlz1(jmoo_problem):
 
 class dtlz2(jmoo_problem):
     "DTLZ2"
-    def __init__(prob, numDecs=10, numObjs=2):
-        super(dtlz2, prob).__init__()
+    def __init__(prob, numDecs=10, numObjs=2, percentage=0):
+        prob.percentage = percentage
         prob.name = "DTLZ2_" + str(numDecs) + "_" + str(numObjs)
         names = ["x"+str(i+1) for i in range(numDecs)]
         lows =  [0.0 for i in range(numDecs)]
@@ -763,8 +878,8 @@ class dtlz2(jmoo_problem):
 
 class dtlz3(jmoo_problem):
     "DTLZ3"
-    def __init__(prob, numDecs=10, numObjs=2):
-        super(dtlz3, prob).__init__()
+    def __init__(prob, numDecs=10, numObjs=2, percentage=0):
+        prob.percentage = percentage
         prob.name = "DTLZ3_" + str(numDecs) + "_" + str(numObjs)
         names = ["x"+str(i+1) for i in range(numDecs)]
         lows =  [0.0 for i in range(numDecs)]
@@ -807,8 +922,8 @@ class dtlz3(jmoo_problem):
 
 class dtlz4(jmoo_problem):
     "DTLZ4"
-    def __init__(prob, numDecs=10, numObjs=2):
-        super(dtlz4, prob).__init__()
+    def __init__(prob, numDecs=10, numObjs=2, percentage=0):
+        prob.percentage = percentage
         prob.name = "DTLZ4_" + str(numDecs) + "_" + str(numObjs)
         names = ["x"+str(i+1) for i in range(numDecs)]
         lows =  [0.0 for i in range(numDecs)]
@@ -851,8 +966,7 @@ class dtlz4(jmoo_problem):
 class dtlz5(jmoo_problem):
     "DTLZ5"
     def __init__(prob, numDecs=10, numObjs=2):
-        super(dtlz5, prob).__init__()
-        prob.name = "DTLZ5"
+        prob.name = "DTLZ5_" + str(numDecs) + "_" + str(numObjs)
         names = ["x"+str(i+1) for i in range(numDecs)]
         lows =  [0.0 for i in range(numDecs)]
         ups =   [1.0 for i in range(numDecs)]
@@ -898,9 +1012,7 @@ class dtlz5(jmoo_problem):
 class dtlz6(jmoo_problem):
     "DTLZ6"
     def __init__(prob, numDecs=20, numObjs=2):
-
-        super(dtlz6, prob).__init__()
-        prob.name = "DTLZ6"
+        prob.name = "DTLZ6_" + str(numDecs) + "_" + str(numObjs)
         names = ["x"+str(i+1) for i in range(numDecs)]
         lows =  [0.0 for i in range(numDecs)]
         ups =   [1.0 for i in range(numDecs)]
@@ -949,12 +1061,13 @@ class dtlz7(jmoo_problem):
     def __init__(prob, numDecs=20, numObjs=2):
 
         super(dtlz7, prob).__init__()
-        prob.name = "DTLZ7"
+        prob.name = "DTLZ7_" + str(numDecs) + "_" + str(numObjs)
         names = ["x"+str(i+1) for i in range(numDecs)]
         lows =  [0.0 for i in range(numDecs)]
         ups =   [1.0 for i in range(numDecs)]
         prob.decisions = [jmoo_decision(names[i], lows[i], ups[i]) for i in range(numDecs)]
         prob.objectives = [jmoo_objective("f" + str(i+1), True) for i in range(numObjs)]
+
 
     def evaluate(prob,input = None):
 
@@ -1155,55 +1268,3 @@ class scale_test_dissimilar(jmoo_problem):
         return [objective.value for objective in prob.objectives]
     def evalConstraints(prob,input = None):
         return False #no constraints
-
-
-
-class convex_dtlz2(jmoo_problem):
-    "DTLZ2"
-    def __init__(prob, numDecs=10, numObjs=2):
-        super(convex_dtlz2, prob).__init__()
-        prob.name = "Convex_DTLZ2_" + str(numDecs) + "_" + str(numObjs)
-        names = ["x"+str(i+1) for i in range(numDecs)]
-        lows =  [0.0 for i in range(numDecs)]
-        ups =   [1.0 for i in range(numDecs)]
-        prob.decisions = [jmoo_decision(names[i], lows[i], ups[i]) for i in range(numDecs)]
-        prob.objectives = [jmoo_objective("f" + str(i+1), True) for i in range(numObjs)]
-
-    def evaluate(prob,input = None):
-        if input:
-            for i,decision in enumerate(prob.decisions):
-                decision.value = input[i]
-        k = len(prob.decisions) - len(prob.objectives) + 1
-        g = 0.0
-
-        x = []
-        for i in range(0, len(prob.decisions)):
-            x.append(prob.decisions[i].value)
-
-        for i in range(len(prob.decisions) - k, len(prob.decisions)):
-            g += (x[i] - 0.5)*(x[i] - 0.5)
-
-
-
-        f = []
-        for i in range(0, len(prob.objectives)):
-            f.append(1.0 + g)
-
-        for i in range(0, len(prob.objectives)):
-            for j in range(0, len(prob.objectives) - (i+1)):
-                f[i] *= cos(x[j]*0.5*pi);
-            if not (i == 0):
-                aux = len(prob.objectives) - (i+1)
-                f[i] *= sin(x[aux]*0.5*pi)
-
-        #transformation from concave to convex
-        output = [ff**4 if i < len(prob.objectives) - 1 else ff ** 2 for i, ff in enumerate(f)]
-        assert(len(f) == len(output)), "The transformation is wrong"
-
-        for i in range(0, len(prob.objectives)):
-            prob.objectives[i].value = output[i]
-
-        return [objective.value for objective in prob.objectives]
-
-    def evalConstraints(prob,input = None):
-        return False
