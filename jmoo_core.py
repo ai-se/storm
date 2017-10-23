@@ -234,19 +234,26 @@ class JMOO:
         results = []
 
 
-
+        times = {}
         # Main control loop
         pool = mp.Pool()
         for problem in self.tests.problems:
+            times[problem.name] = {}
             for algorithm in self.tests.algorithms:
+                times[problem.name][algorithm.name] = []
                 for repeat in range(self.configurations["Universal"]["Repeats"]):
-                    # call_jmoo_evo(problem, algorithm, self.configurations, repeat)
-                    print problem.name, algorithm.name, repeat
-                    pool.apply_async(call_jmoo_evo, (problem, algorithm, self.configurations, repeat))
+                    init = time.time()
+                    call_jmoo_evo(problem, algorithm, self.configurations, repeat)
+                    times[problem.name][algorithm.name].append(time.time() - init)
+                    print times
+                    # print problem.name, algorithm.name, repeat
+                    # pool.apply_async(call_jmoo_evo, (problem, algorithm, self.configurations, repeat))
 
         pool.close()
         pool.join()
         print(results)
+        import pickle
+        pickle.dump(times, open('time.p', 'w'))
 
 
                     

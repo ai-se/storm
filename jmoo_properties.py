@@ -49,14 +49,14 @@ from Problems.MONRP.monrp import MONRP
 algorithms = [
             # jmoo_MOEAD_PBI()
             jmoo_MOEAD_TCH(),
-            # jmoo_NSGAII(),
-            # jmoo_SPEA2(),
+            jmoo_NSGAII(),
+            jmoo_SPEA2(),
             # jmoo_SWAY5()
               ]
 
 problems =[
-    # POM3A(),
-    # POM3B(),
+    POM3A(),
+    POM3B(),
     POM3C(),
     POM3D(),
     XOMO_flight(),
@@ -76,8 +76,8 @@ build_new_pop = False                                       # Whether or not to 
 
 Configurations = {
     "Universal": {
-        "Repeats" : 20,
-        "Population_Size" : 10000,
+        "Repeats" : 5,
+        "Population_Size" : 100,
         "No_of_Generations" : 20
     },
     "NSGAIII": {

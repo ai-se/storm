@@ -7,10 +7,11 @@ from Helper.pom3 import pom3
 class POM3A(jmoo_problem):
     "POM3A"
 
-    def __init__(prob):
+    def __init__(prob, percentage=-1):
+        prob.percentage=percentage
         prob.name = "POM3A"
-        names = ["Culture", "Criticality", "Criticality Modifier", "Initial Known", "Inter-Dependency", "Dynamism",
-                 "Size", "Plan", "Team Size"]
+        names = ["Culture", "Criticality", "Criticality Modifier", "Initial Known", "Inter-Dependency",
+                 "Dynamism", "Size", "Plan", "Team Size"]
         LOWS = [0.1, 0.82, 2, 0.40, 1, 1, 0, 0, 1]
         UPS = [0.9, 1.20, 10, 0.70, 100, 50, 4, 5, 44]
         prob.decisions = [jmoo_decision(names[i], LOWS[i], UPS[i]) for i in range(len(names))]
@@ -34,3 +35,21 @@ class POM3A(jmoo_problem):
 
     def evalConstraints(prob, input=None):
         return False  # no constraints
+
+
+class POM3AS(POM3A):
+    "POM3A Small"
+
+    def __init__(prob, percentage=-1):
+        prob.percentage = percentage
+        prob.name = "POM3A(S)"
+        names = ["Culture", "Criticality", "Criticality Modifier", "Initial Known", "Inter-Dependency", "Dynamism",
+                 "Size", "Plan", "Team Size"]
+        LOWS = [0.3, 0.95, 4, 0.50, 40, 30, 1, 1, 20]
+        UPS = [0.6, 1.10, 7, 0.60, 60, 45, 3, 3, 30]
+        prob.decisions = [jmoo_decision(names[i], LOWS[i], UPS[i]) for i in range(len(names))]
+        # prob.objectives = [jmoo_objective("Cost", True, 0), jmoo_objective("Score", False, 0, 1),
+        #                    jmoo_objective("Completion", False, 0, 1)]#, jmoo_objective("Idle", True, 0, 1)]
+        prob.objectives = [jmoo_objective("Cost", True, 0), jmoo_objective("Score", True, 0, 1),
+                           # jmoo_objective("Completion", False, 0, 1)]
+                           jmoo_objective("Idle", True, 0, 1)]

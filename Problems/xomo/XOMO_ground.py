@@ -17,7 +17,8 @@ from Base.xomo_liaison import xomol
 class XOMO_ground(jmoo_problem):
     "Xomo_ground"
 
-    def __init__(prob):
+    def __init__(prob, percentage=-1):
+        prob.percentage=percentage
         prob.name = "xomo_ground"
         # Should be as xomol.names to maintain order of LOWs and UPs
         names = ["aa", "sced", "cplx", "site", "resl", "acap", "etat", "rely",
